@@ -1,6 +1,9 @@
 import numpy as np
 import cv2 as cv
 
+# def colorDetected(colorName, frame):
+
+
 debug = True
 
 cap = cv.VideoCapture(0)
@@ -17,8 +20,10 @@ while True:
         print("can't recieve frame (stream end?) exiting...")
         break
 
-    gray = cv.cvtColor(frame, cv.COLOR_RGB2BGR)
-    cv.imshow('LIVE CAMERA!!', gray)
+    grayScaleOption = cv.cvtColor(frame, cv.COLOR_RGB2BGR)
+    #add in grayScaleOption
+    cv.imshow('LIVE CAMERA!!', frame)
+
     if cv.waitKey(1) == ord('q'):
         break
 
