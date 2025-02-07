@@ -1,5 +1,6 @@
 import numpy as np
 import cv2
+from PIL import Image
 
 def getLimits(color, debug=False):
     #Docstrings are being weird rn
@@ -27,3 +28,61 @@ def getLimits(color, debug=False):
 
     return lowerLimit, upperLimit
 
+def createMask(view, lowerLimit, upperLimit, debug=False):
+    """Create a mask for given color
+
+        Args:
+            view (cv object): Camera view
+            lowerLimit (np.array): lower bound for color
+            upperLimit (np.array): upper bound for color
+            debug (bool): enter debug mode
+
+        Returns:
+            colorMaskP (PIL object): colorMask image in PIL format
+    
+    """
+    hsvImage = cv2.cvtColor(view, cv2.COLOR_BGR2HSV)
+    if debug:
+        print("createMask: succesfully converted image to hsv")
+    colorMask = cv2.inRange(hsvImage, lowerLimit, upperLimit)
+
+    #Visualize mask
+    if debug:
+        cv2.imshow('mask', colorMask)
+
+    #Convert colorMask to PIL format
+    colorMaskP = Image.fromarray(colorMask)
+    if debug:
+        print("createMask: succesfully converted mask to PIL format")
+
+    return colorMaskP
+
+def createBoundingBox(view, colorMask, boundingBoxColor=(0,0,255), boundingBoxThickness=3, debug=False):
+    """Create a rectangle around input colorMask
+    
+        Args:
+            view (cv object): Camera view
+            colorMask (PIL object): PIL image with desired color
+            boundingBoxColor (tuple): BRG value of bbox color
+            boundingBoxThickness (int): pixel width of bbox
+
+        Returns:
+            x1, y1 (tuple): first corner of bbox coords
+            x2, y2 (tuple): oppositi corner of bbox coords
+    
+    """
+
+    boundingBox = colorMask.getbbox()
+    if debug and boundingBox is not None:
+        print("createBoundingBox: boundingBox coordinates {}".format(boundingBox))
+    if boundingBox is not None:
+        x1, y1, x2, y2 = boundingBox
+        cv2.rectangle(view, (x1, y1), (x2, y2), boundingBoxColor, boundingBoxThickness)
+    elif boundingBox == None:
+        x1, y1, x2, y2 = None
+
+    if x1 is not None:
+        return (x1, y1), (x2, y2)
+    else:
+        return None
+    
