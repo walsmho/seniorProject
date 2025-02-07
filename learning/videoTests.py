@@ -1,12 +1,9 @@
 import numpy as np
 import cv2 as cv
 
-# def colorDetected(colorName, frame):
-
-
 debug = True
 
-cap = cv.VideoCapture(0)
+cap = cv.VideoCapture(1)
 if not cap.isOpened() and debug:
     print("camera error: cannot open camera")
     exit()
