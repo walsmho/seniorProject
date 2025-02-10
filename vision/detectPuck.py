@@ -1,5 +1,6 @@
 import cv2
 from PIL import Image
+from puck import puckObject
 from visionUtil import getLimits, createMask, createBoundingBox, objMoved
 
 capture = cv2.VideoCapture(0) # for external webcam hookup in setup
@@ -25,9 +26,12 @@ while True:
 
     #When seeing puck:
     if boundingInitial is not None:
-        (x1_,y1_), (x2, y2) = createBoundingBox(view, colorMaskP)
+        puck = puckObject(view, puckColor)
+        (x1_,y1_), (x2,y2) = puck.createBoundingBox(view, boundingInitial)
 
-        movedX, movedY, trajectoryX, trajectoryY = objMoved((x1,y1),(x1_,y1_), 20, debug)
+        # (x1_,y1_), (x2, y2) = createBoundingBox(view, colorMaskP)
+
+        # movedX, movedY, trajectoryX, trajectoryY = objMoved((x1,y1),(x1_,y1_), 20, debug)
 
     #When not seeing puck:
     elif boundingInitial is None:
