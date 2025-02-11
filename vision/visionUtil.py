@@ -69,7 +69,7 @@ def createBoundingBox(view, colorMask, boundingBoxColor=(0,0,255), boundingBoxTh
 
         Returns:
             x1, y1 (tuple): first corner of bbox coords
-            x2, y2 (tuple): oppositi corner of bbox coords
+            x2, y2 (tuple): opposite corner of bbox coords
     
     """
 
