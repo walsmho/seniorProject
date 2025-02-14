@@ -6,11 +6,11 @@ def getLimits(color, debug=False):
     #Docstrings are being weird rn
     """Get upper and lower bounds of desired color for detection.
 
-        Args:
+        ### Args:
             color (list): Desired color to get limits of
             debug (bool): Enter debug mode
 
-        Returns:
+        ### Returns:
             lowerLimit (np.array): lower bound for color
             upperLimit (np.array): upper bound for color
 
@@ -31,16 +31,17 @@ def getLimits(color, debug=False):
 def createMask(view, lowerLimit, upperLimit, debug=False):
     """Create a mask for given color
 
-        Args:
+        ### Args:
             view (cv object): Camera view
             lowerLimit (np.array): lower bound for color
             upperLimit (np.array): upper bound for color
             debug (bool): enter debug mode
 
-        Returns:
+        ### Returns:
             colorMaskP (PIL object): colorMask image in PIL format
     
     """
+
     hsvImage = cv2.cvtColor(view, cv2.COLOR_BGR2HSV)
     if debug:
         print("createMask: succesfully converted image to hsv")
@@ -60,14 +61,14 @@ def createMask(view, lowerLimit, upperLimit, debug=False):
 def createBoundingBox(view, colorMask, boundingBoxColor=(0,0,255), boundingBoxThickness=3, debug=False):
     """Create a rectangle around input colorMask
     
-        Args:
+        ### Args:
             view (cv object): Camera view
             colorMask (PIL object): PIL image with desired color
             boundingBoxColor (tuple): BRG value of bbox color
             boundingBoxThickness (int): pixel width of bbox
             debug (bool): Enter deubg mode
 
-        Returns:
+        ### Returns:
             x1, y1 (tuple): first corner of bbox coords
             x2, y2 (tuple): opposite corner of bbox coords
     
@@ -86,64 +87,3 @@ def createBoundingBox(view, colorMask, boundingBoxColor=(0,0,255), boundingBoxTh
         return (x1, y1), (x2, y2)
     else:
         return None
-
-def objMoved(coordPrev, coordNew, tolerance, debug=False):
-    """Check to see if object in bounding box moved and where, given some tolerance
-
-        Args:
-            coordPrev (tuple): Previous coordinate set from last frame
-            coordNew (tuple): Current coordinate set from existing frame
-            tolerance (int): Tolerance of pixels for movement
-            debug (bool): Enter debug mode
-
-        Returns:
-            moved (bool): Whether object moved or not
-            trajectoryX (string): If moved, vector of direction. Else, returns none. Currently returning a string of "left, right" for testing
-            trajectoryY (string): If moved, vector of direction. Else, returns none. Currently returning a string of "up, down" for testing
-    
-    """
-    #Check x-axis coords
-    if np.abs(coordPrev[0]-coordNew[0]) > tolerance:
-        movedX = True
-
-        if coordPrev > coordNew:
-            if debug:
-                print("objMoved: Moved Left")
-            trajectoryX = "left"
-        elif coordPrev < coordNew:
-            if debug:
-                print("objMoved: Moved Right")
-            trajectoryX = "right"
-
-    elif np.abs(coordPrev[0]-coordNew[0] <= tolerance):
-        if debug:
-            print("objMoved: No x-axis movement")
-        movedX = False
-        trajectoryX = None
-
-    #Check y-axis coords
-    if np.abs(coordPrev[1]-coordNew[1]) > tolerance:
-        movedY = True
-
-        if coordPrev > coordNew:
-            if debug:
-                print("objMoved: Moved Up")
-            trajectoryY = "up"
-        elif coordPrev < coordNew:
-            if debug:
-                print("objMoved: Moved Down")
-            trajectoryY = "down"
-
-    elif np.abs(coordPrev[1]-coordNew[1] <= tolerance):
-        if debug:
-            print("objMoved: No y-axis movement")
-        movedY = False
-        trajectoryY = None
-
-    else:
-        movedX = False
-        movedY = False
-        trajectoryX = None
-        trajectoryY = None
-    
-    return movedX, movedY, trajectoryX, trajectoryY
