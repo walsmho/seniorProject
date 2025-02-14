@@ -2,10 +2,10 @@ import cv2
 from visionUtil import getLimits, createMask, createBoundingBox
 from puck import puckObject
 
-capture = cv2.VideoCapture(0) # for external webcam hookup in setup
+capture = cv2.VideoCapture(1) # for external webcam hookup in setup
 
 #Temp until permanent setting with good lighting exists
-puckColor = [0,165,255] #BGR orange value
+puckColor = [0,255,255] #BGR orange value
 puck = puckObject()
 debug = True
 
@@ -24,7 +24,13 @@ while True:
     #When seeing puck:
     if boundingInitial is not None:
         newCoordBottom, newCoordTop = createBoundingBox(view, colorMaskP)
-        movedX, movedY, trajectoryX, trajectoryY = puck.hasMoved(newCoordBottom, 5)
+        centerCoord = ([(newCoordBottom[0]+newCoordTop[0])/2, (newCoordBottom[1]+newCoordTop[1]/2)])
+
+        direction, speed = puck.currentVector(centerCoord, 1)
+
+        print(f"Direction: {direction}")
+        print(f"Speed: {speed}")
+
         puck.update(newCoordBottom, newCoordTop)
 
     #When not seeing puck:

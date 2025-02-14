@@ -2,6 +2,8 @@ import numpy as np
 import cv2
 from PIL import Image
 
+# TODO: Make this coord system utilize the center of the bbox instead of bottom left throughout
+
 class puckObject:
     def __init__(self, coordBottom=(0,0), coordTop=(0,0)):
         self.coordBottom = coordBottom
@@ -26,7 +28,7 @@ class puckObject:
             print("\npuck.update: Succesful coordinate update")
 
     def hasMoved(self, coordNew, tolerance, debug=False):
-        """Uses the bottom left coordinate provided and a tolerance to determine if object has changed position
+        """Uses the center coord provided and a tolerance to determine if object has changed position
         
             ### Args:
                 coordNew (tuple): new coordinate to compare with self coord
@@ -83,3 +85,30 @@ class puckObject:
             trajectoryY = None
         
         return movedX, movedY, trajectoryX, trajectoryY
+
+    def currentVector(self, currentCenter, fps=30, debug=False):
+        """Finds vector of puck based on recent coordinates
+        
+            ### Args:
+                currentCenter (tuple): Coordinates of center of bbox
+                fps (int): Frames Per Second of camera in use
+                debug (bool): Enter debug mode
+        
+            ### Returns:
+                direction (np.array()) coord points for direction
+                speed (float) speed in pixels/second
+        """
+
+        #Calculate center of puck from bbox coords
+        oldCenter = np.array([(self.coordBottom[0]+self.coordTop[0])/2, (self.coordBottom[1]+self.coordTop[1]/2)])
+        deltaTime = 1/fps
+        if debug:
+            print("currentVector: previous puck center coord designated as {}".format(oldCenter))
+        
+        displacement = currentCenter - oldCenter
+        if debug:
+            print("currentVector: displacement at {}".format(displacement))
+        direction = displacement / np.linalg.norm(displacement)
+        speed = np.linalg.norm(displacement) / deltaTime
+
+        return direction, speed
