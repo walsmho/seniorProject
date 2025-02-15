@@ -11,8 +11,8 @@ def getLimits(color, debug=False):
             debug (bool): Enter debug mode
 
         ### Returns:
-            lowerLimit (np.array): lower bound for color
-            upperLimit (np.array): upper bound for color
+            lowerLimit (np.array): Lower bound for color
+            upperLimit (np.array): Upper bound for color
 
     """
 
@@ -26,6 +26,10 @@ def getLimits(color, debug=False):
     lowerLimit = np.array(lowerLimit, dtype=np.uint8)
     upperLimit = np.array(upperLimit, dtype=np.uint8)
 
+    if debug:
+        print(f"\ngetLimits: lowerLimit: {lowerLimit}")
+        print(f"\ngetLimits: upperLimit: {upperLimit}")
+
     return lowerLimit, upperLimit
 
 def createMask(view, lowerLimit, upperLimit, debug=False):
@@ -33,9 +37,9 @@ def createMask(view, lowerLimit, upperLimit, debug=False):
 
         ### Args:
             view (cv object): Camera view
-            lowerLimit (np.array): lower bound for color
-            upperLimit (np.array): upper bound for color
-            debug (bool): enter debug mode
+            lowerLimit (np.array): Lower bound for color
+            upperLimit (np.array): Upper bound for color
+            debug (bool): Enter debug mode
 
         ### Returns:
             colorMaskP (PIL object): colorMask image in PIL format
@@ -44,7 +48,7 @@ def createMask(view, lowerLimit, upperLimit, debug=False):
 
     hsvImage = cv2.cvtColor(view, cv2.COLOR_BGR2HSV)
     if debug:
-        print("createMask: succesfully converted image to hsv")
+        print("\ncreateMask: succesfully converted image to hsv")
     colorMask = cv2.inRange(hsvImage, lowerLimit, upperLimit)
 
     #Visualize mask
@@ -54,7 +58,7 @@ def createMask(view, lowerLimit, upperLimit, debug=False):
     #Convert colorMask to PIL format
     colorMaskP = Image.fromarray(colorMask)
     if debug:
-        print("createMask: succesfully converted mask to PIL format")
+        print("\ncreateMask: succesfully converted mask to PIL format")
 
     return colorMaskP
 
@@ -65,18 +69,18 @@ def createBoundingBox(view, colorMask, boundingBoxColor=(0,0,255), boundingBoxTh
             view (cv object): Camera view
             colorMask (PIL object): PIL image with desired color
             boundingBoxColor (tuple): BRG value of bbox color
-            boundingBoxThickness (int): pixel width of bbox
+            boundingBoxThickness (int): Pixel width of bbox
             debug (bool): Enter deubg mode
 
         ### Returns:
-            x1, y1 (tuple): first corner of bbox coords
-            x2, y2 (tuple): opposite corner of bbox coords
+            x1, y1 (tuple): First corner of bbox coords
+            x2, y2 (tuple): Opposite corner of bbox coords
     
     """
 
     boundingBox = colorMask.getbbox()
     if debug and boundingBox is not None:
-        print("createBoundingBox: boundingBox coordinates {}".format(boundingBox))
+        print(f"\ncreateBoundingBox: boundingBox coordinates {boundingBox}")
     if boundingBox is not None:
         x1, y1, x2, y2 = boundingBox
         cv2.rectangle(view, (x1, y1), (x2, y2), boundingBoxColor, boundingBoxThickness)
