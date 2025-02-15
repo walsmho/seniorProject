@@ -24,12 +24,19 @@ while True:
     #When seeing puck:
     if boundingInitial is not None:
         newCoordBottom, newCoordTop = createBoundingBox(view, colorMaskP)
-        centerCoord = ([(newCoordBottom[0]+newCoordTop[0])/2, (newCoordBottom[1]+newCoordTop[1]/2)])
 
-        direction, speed = puck.currentVector(centerCoord, 1)
+        centerCoord = (((newCoordBottom[0] + newCoordTop[0]) / 2), ((newCoordBottom[1] + newCoordTop[1]) / 2))
+        moved, direction, speed = puck.currentVector(centerCoord)
 
-        print(f"Direction: {direction}")
-        print(f"Speed: {speed}")
+        if moved and debug:
+            print(f"Direction: {direction}")
+            print(f"Speed: {speed}")
+            pass
+
+        if moved:
+            lineStart, lineEnd = puck.linePrediction(view, centerCoord, direction)
+            if debug:
+                print("Puck heading to {} at {} pixels / second".format(lineEnd, speed))
 
         puck.update(newCoordBottom, newCoordTop)
 

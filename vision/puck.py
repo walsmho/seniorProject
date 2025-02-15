@@ -1,6 +1,5 @@
 import numpy as np
 import cv2
-from PIL import Image
 
 # TODO: Make this coord system utilize the center of the bbox instead of bottom left throughout
 
@@ -95,20 +94,46 @@ class puckObject:
                 debug (bool): Enter debug mode
         
             ### Returns:
-                direction (np.array()) coord points for direction
-                speed (float) speed in pixels/second
+                moved (bool): If moved above threshold
+                direction (np.array()): coord points for direction
+                speed (float): speed in pixels/second
         """
 
         #Calculate center of puck from bbox coords
-        oldCenter = np.array([(self.coordBottom[0]+self.coordTop[0])/2, (self.coordBottom[1]+self.coordTop[1]/2)])
+        oldCenter = np.array([(self.coordBottom[0]+self.coordTop[0])/2, ((self.coordBottom[1]+self.coordTop[1])/2)])
         deltaTime = 1/fps
         if debug:
             print("currentVector: previous puck center coord designated as {}".format(oldCenter))
         
-        displacement = currentCenter - oldCenter
+        displacement = np.array(currentCenter) - oldCenter
+
         if debug:
             print("currentVector: displacement at {}".format(displacement))
-        direction = displacement / np.linalg.norm(displacement)
+
+        if np.linalg.norm(displacement) > 0:
+            direction = displacement / np.linalg.norm(displacement)
+        else:
+            direction = np.array([0,0])
+
         speed = np.linalg.norm(displacement) / deltaTime
 
-        return direction, speed
+        # If movement above threshold
+        if np.linalg.norm(displacement) > 1:
+            moved = True
+        else:
+            moved = False
+
+        return moved, direction, speed
+    
+    def linePrediction(self, view, currentCenter, direction, lineColor=(0,255,0), lineThickness=3, lineScale=250, debug=False):
+        currentCenter = (int(currentCenter[0]), int(currentCenter[1]))
+        lineEnd = currentCenter + direction * lineScale
+        lineEnd = (int(lineEnd[0]), int(lineEnd[1]))
+
+        if debug:
+            print(currentCenter)
+            print(lineEnd)
+
+        cv2.line(view, currentCenter, lineEnd, lineColor, lineThickness)
+
+        return currentCenter, lineEnd
