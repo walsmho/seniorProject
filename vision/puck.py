@@ -26,11 +26,12 @@ class puckObject:
         if debug:
             print("\npuck.update: Succesful coordinate update")
 
-    def currentVector(self, currentCenter, fps=30, debug=False):
+    def currentVector(self, currentCenter, tolerance, fps, debug=False):
         """Finds vector of puck based on recent coordinates
         
             ### Args:
                 currentCenter (tuple): Coordinates of center of bbox
+                tolerance (int): Pixel tolerance before displacement is considered as movement
                 fps (int): Frames Per Second of camera in use
                 debug (bool): Enter debug mode
         
@@ -51,7 +52,7 @@ class puckObject:
         if debug:
             print(f"\npuck.currentVector: displacement at {displacement}")
 
-        if np.linalg.norm(displacement) > 0:
+        if np.linalg.norm(displacement) > tolerance:
             direction = displacement / np.linalg.norm(displacement)
         else:
             direction = np.array([0,0])

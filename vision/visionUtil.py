@@ -2,8 +2,22 @@ import numpy as np
 import cv2
 from PIL import Image
 
+def beginVideoCapture(webcam, debug=False):
+    """Initiate video capture from cv.
+    
+        ### Args:
+            webcam (int): Camera input. 0 for built-in, 1 for external
+            debug (bool): Enter debug mode
+
+        ### Returns:
+            capture (cv2 object): Webcam object for further use
+
+    """
+    
+    capture = cv2.VideoCapture(webcam)
+    return capture
+
 def getLimits(color, debug=False):
-    #Docstrings are being weird rn
     """Get upper and lower bounds of desired color for detection.
 
         ### Args:
@@ -32,13 +46,14 @@ def getLimits(color, debug=False):
 
     return lowerLimit, upperLimit
 
-def createMask(view, lowerLimit, upperLimit, debug=False):
+def createMask(view, lowerLimit, upperLimit, maskName, debug=False):
     """Create a mask for given color
 
         ### Args:
             view (cv object): Camera view
             lowerLimit (np.array): Lower bound for color
             upperLimit (np.array): Upper bound for color
+            maskName (str): Name for mask window if debug is on
             debug (bool): Enter debug mode
 
         ### Returns:
@@ -53,7 +68,7 @@ def createMask(view, lowerLimit, upperLimit, debug=False):
 
     #Visualize mask
     if debug:
-        cv2.imshow('mask', colorMask)
+        cv2.imshow(maskName, colorMask)
 
     #Convert colorMask to PIL format
     colorMaskP = Image.fromarray(colorMask)
