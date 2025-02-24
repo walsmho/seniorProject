@@ -9,4 +9,4 @@ WEBCAM = 0
 TOLERANCE = 1
 FPS = 30
 
-DEBUG = True
+DEBUG = False

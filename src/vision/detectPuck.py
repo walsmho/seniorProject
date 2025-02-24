@@ -1,7 +1,9 @@
+### Must run file from bash as "py -m src.vision.detectPuck"
 import cv2
-from visionUtil import getLimits, createMask, createBoundingBox, beginVideoCapture
-from puck import puckObject
-from config import *
+from src.vision.visionUtil import getLimits, createMask, createBoundingBox, beginVideoCapture
+from src.comms.communicator import response
+from src.vision.puck import puckObject
+from src.vision.config import *
 
 #Turn capture into its own class as well?
 capture = beginVideoCapture(WEBCAM)
@@ -33,6 +35,8 @@ while True:
             lineStart, lineEnd = puck.linePrediction(view, centerCoord, direction, debug=DEBUG)
             if DEBUG:
                 print("\nPuck heading to {} at {} pixels / second".format(lineEnd, speed))
+
+        msg = response(moved, direction, speed)
 
         puck.update(newCoordBottom, newCoordTop, DEBUG)
 
