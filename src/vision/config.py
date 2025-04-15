@@ -6,7 +6,7 @@ PUCK_MASK = "Puck Mask"
 BOUNDARY_MASK = "Boundary Mask"
 
 WEBCAM = 0
-TOLERANCE = 1
+TOLERANCE = 5
 FPS = 30
 
-DEBUG = False
+DEBUG = True

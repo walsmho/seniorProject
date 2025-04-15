@@ -1,7 +1,7 @@
 ### Must run file from bash as "py -m src.vision.detectPuck"
 import cv2
 from src.vision.visionUtil import getLimits, createMask, createBoundingBox, beginVideoCapture
-from src.comms.communicator import response
+#from src.comms.communicator import response
 from src.vision.puck import puckObject
 from src.vision.config import *
 
@@ -36,7 +36,7 @@ while True:
             if DEBUG:
                 print("\nPuck heading to {} at {} pixels / second".format(lineEnd, speed))
 
-        msg = response(moved, direction, speed)
+        #msg = response(moved, direction, speed)
 
         puck.update(newCoordBottom, newCoordTop, DEBUG)
 
