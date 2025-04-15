@@ -1,4 +1,5 @@
 ### Must run file from bash as "py -m src.vision.detectPuck"
+
 import cv2
 from src.vision.visionUtil import getLimits, createMask, createBoundingBox, beginVideoCapture
 #from src.comms.communicator import response

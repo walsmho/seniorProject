@@ -84,19 +84,3 @@ void xLeft(int steps, int delay) {
         delayMicroseconds(delay);
     }
 }
-
-void loop() {
-
-    //TEST TO MOVE FORWARD 
-    yForward(200, 500);
-    delay(5000);
-    //TEST TO MOVE BACKWARD
-    yBackward(600, 500);
-    delay(5000);
-    //TEST TO MOVE RIGHT
-    xRight(200, 500);
-    delay(5000);
-    //TEST TO MOVE LEFT
-    xLeft(200, 500);
-    delay(5000);
-}
