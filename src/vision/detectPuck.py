@@ -9,18 +9,19 @@ from src.vision.config import *
 #Turn capture into its own class as well?
 capture = beginVideoCapture(WEBCAM)
 
+
 puck = puckObject()
 
 while True:
     #Capture frame, create mask
     ret, view = capture.read()
+    captureHeight, captureWidth = view.shape[:2]
     if not ret and DEBUG:
         print("detectPuck.py error: Can't recieve frame. (stream end?) exiting...")
         break
     lowerLimit, upperLimit = getLimits(PUCK_COLOR, DEBUG)
     lowerLimitRail, upperLimitRail = getLimits(BOUNDARY_COLOR, DEBUG)
     colorMaskPuck = createMask(view, lowerLimit, upperLimit, PUCK_MASK, DEBUG)
-    colorMaskRails = createMask(view, lowerLimitRail, upperLimitRail, BOUNDARY_MASK, DEBUG)
 
     #check if object exists
     boundingInitial = colorMaskPuck.getbbox()
@@ -32,8 +33,10 @@ while True:
         centerCoord = (((newCoordBottom[0] + newCoordTop[0]) / 2), ((newCoordBottom[1] + newCoordTop[1]) / 2))
         moved, direction, speed = puck.currentVector(centerCoord, TOLERANCE, FPS, debug=DEBUG)
 
+        #Draw prediction line
         if moved:
-            lineStart, lineEnd = puck.linePrediction(view, centerCoord, direction, debug=DEBUG)
+            # lineStart, lineEnd = puck.linePrediction(view, centerCoord, direction, debug=DEBUG)
+            lineStart, lineEnd = puck.reboundPrediction(view, captureHeight, captureWidth, centerCoord, direction, debug=DEBUG)
             if DEBUG:
                 print("\nPuck heading to {} at {} pixels / second".format(lineEnd, speed))
 

@@ -60,7 +60,7 @@ class puckObject:
         speed = np.linalg.norm(displacement) / deltaTime
 
         # If movement above threshold
-        if np.linalg.norm(displacement) > 1:
+        if np.linalg.norm(displacement) > 5:
             moved = True
         else:
             moved = False
@@ -71,7 +71,7 @@ class puckObject:
 
         return moved, direction, speed
     
-    def linePrediction(self, view, currentCenter, direction, lineColor=(0,255,0), lineThickness=3, lineScale=250, debug=False):
+    def linePrediction(self, view, currentCenter, direction, lineColor=(0,255,0), lineThickness=3, lineScale=500, debug=False):
         """Predicts the trajectory of the puck given its current position and direction and draws a line for it. DOES NOT ACCOUNT FOR SPEED OR RAILS IN CURRENT VERSION
         
             ### Args:
@@ -101,3 +101,62 @@ class puckObject:
         cv2.line(view, currentCenter, lineEnd, lineColor, lineThickness)
 
         return currentCenter, lineEnd
+    
+    def reboundPrediction(self, view, height, width, currentCenter, direction, lineColor=(0,255,0), lineThickness=3, lineScale=500, debug=False):
+        """Boojier linePrediction that accounts for rebounds off air hockey rails.
+        
+        """
+
+        direction = direction / np.linalg.norm(direction)
+
+        pos = np.array(currentCenter, dtype=float)
+        remainingDistance = lineScale
+        pathPts = [tuple(pos.astype(int))]
+
+        while remainingDistance > 0:
+            if direction[0] > 0:
+                distRight = (width - pos[0]) / direction[0]
+            elif direction[0] < 0:
+                distRight = -pos[0] / direction[0]
+            else:
+                distRight = float('inf')
+
+            if direction[1] > 0:
+                distBottom = (height - pos[1]) / direction[1]
+            elif direction[1] < 0:
+                distBottom = -pos[1] / direction[1]
+            else:
+                distBottom = float('inf')
+
+            # Find the shortest distance to a wall
+            minDist = min(distRight, distBottom, remainingDistance)
+
+            # Move along the direction vector
+            print(f"DIRECTION: {direction}")
+            print(f"minDist: {minDist}")
+            pos += direction * minDist
+            pathPts.append(tuple(pos.astype(int)))
+            remainingDistance -= minDist
+
+            # Reflect direction if a wall was hit
+            if minDist == distRight:
+                direction[0] *= -1  # Reflect X
+            if minDist == distBottom:
+                direction[1] *= -1  # Reflect Y
+
+        # Draw Path
+        for i in range(len(pathPts)-1):
+            print(pathPts)
+            pt1 = tuple(map(int, pathPts[i]))
+            pt2 = tuple(map(int, pathPts[i+1]))
+            if debug:
+                print(type(pt1))
+                print(pt1)
+                print(type(pt2))
+                print(pt2)
+            cv2.line(view, pt1, pt2, lineColor, lineThickness)
+
+        if debug:
+            print(f"reboundPrediction: Trajectory Points: {pathPts}")
+
+        return tuple(currentCenter), pathPts[-1]
