@@ -103,10 +103,25 @@ class puckObject:
         return currentCenter, lineEnd
     
     def reboundPrediction(self, view, height, width, currentCenter, direction, lineColor=(0,255,0), lineThickness=3, lineScale=500, debug=False):
-        """Boojier linePrediction that accounts for rebounds off air hockey rails.
+        """Predicts the trajectory of the puck given its current position, direction, and table perimeter, then visualizes with a line.
         
+            ### Args:
+                view (cv2 object): Frame window to draw line in
+                height
+                currentCenter (np.array): Centered coordinates of tracked puck
+                direction (np.array): Numpy vector of direction
+                lineColor (tuple): BGR value for line color in cv2 window
+                lineThickness (int): Thickness of line on cv2 screen
+                lineScale (int): Line length in pixels. This will not be a variable in future iterations, as length will be determined on speed and reflections off the walls
+                debug (bool): Enter debug mode
+
+            ### Returns:
+                currentCenter (tuple): Coords of puck center
+                pathPts (tuple): Coords of line end 
+
         """
 
+        # Normalize direction
         direction = direction / np.linalg.norm(direction)
 
         pos = np.array(currentCenter, dtype=float)
