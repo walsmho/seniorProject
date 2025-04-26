@@ -11,4 +11,4 @@ FPS = 30
 
 FRICTION = 2
 
-DEBUG = False
+DEBUG = True

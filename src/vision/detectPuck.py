@@ -14,6 +14,7 @@ puck = puckObject()
 while True:
     #Capture frame, create mask
     ret, view = capture.read()
+    view = cv2.pyrDown(view)
     captureHeight, captureWidth = view.shape[:2]
     if not ret and DEBUG:
         print("detectPuck.py error: Can't recieve frame. (stream end?) exiting...")
