@@ -67,6 +67,13 @@ def createMask(view, lowerLimit, upperLimit, maskName, debug=False):
     if debug:
         print("\ncreateMask: succesfully converted image to hsv")
     colorMask = cv2.inRange(hsvImage, lowerLimit, upperLimit)
+    #Reduce effect of noisy lighting
+    colorMask = cv2.GaussianBlur(colorMask, (5, 5), 0)
+
+    #Remove specks and fill holes in puck
+    kernel = np.ones((5, 5), np.uint8)
+    colorMask = cv2.morphologyEx(colorMask, cv2.MORPH_OPEN, kernel)  # removes noise
+    colorMask = cv2.morphologyEx(colorMask, cv2.MORPH_CLOSE, kernel) # fills holes
 
     #Visualize mask
     if debug:

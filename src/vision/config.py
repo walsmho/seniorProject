@@ -5,7 +5,10 @@ FRAME_NAME = "Overhead Table View"
 PUCK_MASK = "Puck Mask"
 
 WEBCAM = 1
-TOLERANCE = 5
+PUCK_TOLERANCE = 1
+TOLERANCE = 10
 FPS = 30
 
-DEBUG = True
+FRICTION = 2
+
+DEBUG = False

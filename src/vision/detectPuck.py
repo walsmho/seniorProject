@@ -29,11 +29,11 @@ while True:
         newCoordBottom, newCoordTop = createBoundingBox(view, colorMaskPuck, debug=DEBUG)
 
         centerCoord = (((newCoordBottom[0] + newCoordTop[0]) / 2), ((newCoordBottom[1] + newCoordTop[1]) / 2))
-        moved, direction, speed = puck.currentVector(centerCoord, TOLERANCE, FPS, debug=DEBUG)
+        moved, direction, speed = puck.currentVector(centerCoord, FPS, debug=DEBUG)
 
         #Draw prediction line
         if moved:
-            lineStart, lineEnd = puck.reboundPrediction(view, captureHeight, captureWidth, centerCoord, direction, debug=DEBUG)
+            lineStart, lineEnd = puck.reboundPrediction(view, captureHeight, captureWidth, centerCoord, direction, speed, debug=DEBUG)
             if DEBUG:
                 print("\nPuck heading to {} at {} pixels / second".format(lineEnd, speed))
 
