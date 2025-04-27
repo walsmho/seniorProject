@@ -2,7 +2,7 @@
 # USE BUTTON 6 TO CONFIRM HOMING AND HATS FOR MOVEMENT
 import os
 import pygame as p
-from src.vision.config import DEBUG
+from src.config import DEBUG
 
 #use dummy video driver
 os.environ["SDL_VIDEODRIVER"] = "dummy"

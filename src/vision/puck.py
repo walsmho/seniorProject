@@ -1,6 +1,6 @@
 import numpy as np
 import cv2
-from src.vision.config import *
+from src.config import *
 
 # TODO: Make this coord system utilize the center of the bbox instead of bottom left throughout
 

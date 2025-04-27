@@ -1,10 +1,8 @@
 ### Must run file from bash as "py -m src.vision.detectPuck"
-
 import cv2
 from src.vision.visionUtil import getLimits, createMask, createBoundingBox, beginVideoCapture
-#from src.comms.communicator import response
 from src.vision.puck import puckObject
-from src.vision.config import *
+from src.config import *
 
 #Turn capture into its own class as well?
 capture = beginVideoCapture(WEBCAM)

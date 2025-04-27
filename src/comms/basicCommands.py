@@ -2,7 +2,7 @@
 import os
 import pygame as p
 import serial
-from src.vision.config import *
+from src.config import *
 
 #use dummy video driver
 os.environ["SDL_VIDEODRIVER"] = "dummy"
