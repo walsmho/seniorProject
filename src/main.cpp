@@ -4,7 +4,7 @@
 void setup() {
     //Open Serial for comms
     Serial.begin(9600);
-    //initializePosition(Serial, currentPosX, currentPosY);
+    String incMessage;
 
     //Set pins for CNC shield
     const int StepX = 2;
@@ -18,7 +18,37 @@ void setup() {
 }
 
 void loop() {
-    delay(1000);
+    if (Serial.available()>0) {
+        char incMessage = Serial.read();
+        Serial.print(incMessage);
+
+            // Ignore newline and carriage return characters
+        if (incMessage == '\n' || incMessage == '\r') {
+            return;
+        }
+
+        Serial.print(incMessage);
+
+        if (incMessage == 'U') {   
+            yForward(100, 500);
+            }
+        else if (incMessage == 'D') {   
+            yBackward(100, 500);
+            }
+        else if (incMessage == 'L') {
+            xLeft(100, 500);
+            }
+        else if (incMessage == 'R') {
+            xRight(100, 500);
+            }
+        else if (incMessage == 'Q') {
+            Serial.print("Quit program");
+            }
+
+        else {
+            Serial.print("Unknown command");
+        }
+    }
 
     // //LIL ROBO DANCE 
     // yForward(600, 500);
