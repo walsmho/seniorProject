@@ -1,6 +1,8 @@
 #include <Arduino.h>
 #include "motorControl/motorMove.h"
 
+bool DEBUG;
+
 void setup() {
     //Open Serial for comms
     Serial.begin(9600);
@@ -15,19 +17,18 @@ void setup() {
     pinMode(DirX,OUTPUT);
     pinMode(StepY,OUTPUT);
     pinMode(DirY,OUTPUT);
+
+    DEBUG = false;
 }
 
 void loop() {
     if (Serial.available()>0) {
         char incMessage = Serial.read();
-        Serial.print(incMessage);
 
-            // Ignore newline and carriage return characters
+        // Ignore newline and carriage return characters
         if (incMessage == '\n' || incMessage == '\r') {
             return;
         }
-
-        Serial.print(incMessage);
 
         if (incMessage == 'U') {   
             yForward(100, 500);
@@ -49,22 +50,4 @@ void loop() {
             Serial.print("Unknown command");
         }
     }
-
-    // //LIL ROBO DANCE 
-    // yForward(600, 500);
-    // delay(1000);
-    // //TEST TO MOVE BACKWARD
-    // yBackward(600, 500);
-    // delay(1000);
-    // //TEST TO MOVE RIGHT
-    // xRight(600, 500);
-    // delay(1000);
-    // //TEST TO MOVE LEFT
-    // xLeft(1200, 500);
-    // delay(1000);
-    // xRight(600, 500);
-    // delay(1000);
-    // yBackward(700, 500);
-    // delay(1000);
-    // yForward(700, 500);
 }

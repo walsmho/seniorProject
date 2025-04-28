@@ -1,16 +1,18 @@
 PUCK_COLOR = [0,255,255] #BGR yellow value
 BOUNDARY_COLOR = [110,80,255] #BGR Hot Pink for border tape
 
+# VISION VARS
 FRAME_NAME = "Overhead Table View"
 PUCK_MASK = "Puck Mask"
-
 WEBCAM = 1
 PUCK_TOLERANCE = 1
 TOLERANCE = 10
 FPS = 30
-
 FRICTION = 2
 
+# CONTROLLER VARS
+CALIBRATED = False
 MANUAL = True
+MOVEMENT_INPUT = 0
 
 DEBUG = True
