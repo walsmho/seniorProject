@@ -1,4 +1,5 @@
 // BASIC MOTOR DIRECTIONS
+// Look into c++ docstrings?
 #include <Arduino.h>
 #include "motorMove.h"
 
@@ -18,6 +19,10 @@ void stepMotor(int stepPin, int dirPin, bool dir, int steps) {
 }
 
 void yForward(int steps, int delay) {
+    /**
+         * Move both steppers to make gantry move forward given steps and given time
+         * Detailed description.
+    */
     digitalWrite(DirX, LOW);
     digitalWrite(DirY, HIGH);
 

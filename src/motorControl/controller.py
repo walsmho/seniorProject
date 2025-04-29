@@ -1,11 +1,20 @@
 # USE BUTTON 6 TO CONFIRM HOMING AND HATS FOR MOVEMENT
+# NEEDS DOCSTRINGS
 import os
 import pygame as p
-import serial
 from src.config import *
 
 class controller:
     def __init__(self, debug=False):
+        """Create a controller object that reads off of a USB game controller for manual mode and calibration
+        
+            ### Args:
+                debug (bool): Enter debug mode
+
+            ### Returns:
+                None
+        
+        """
         #use dummy video driver
         os.environ["SDL_VIDEODRIVER"] = "dummy"
 

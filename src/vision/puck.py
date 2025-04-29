@@ -6,6 +6,17 @@ from src.config import *
 
 class puckObject:
     def __init__(self, coordBottom=(0,0), coordTop=(0,0)):
+        """Create a new puck object with given coordinates. If none given, coords are set at 0.
+        
+            ### Args:
+                coordBottom (tuple): coordinate for bottom left of puck
+                coordTop (tuple): coordinate for top right of puck
+
+            ### Returns:
+                None
+        
+        """
+
         self.coordBottom = coordBottom
         self.coordTop = coordTop
 
