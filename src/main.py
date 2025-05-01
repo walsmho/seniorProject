@@ -1,5 +1,6 @@
 from src.config import *
 from src.motorControl.controller import controller
+from src.motorControl.homing import homingSequence
 from src.comms.bridge import communicator
 
 def main():
@@ -9,12 +10,7 @@ def main():
     joystick = controller()
     bridge = communicator()
 
-    while MANUAL:
-        command = joystick.findGantryInput(DEBUG)
-        bridge.issueCommand(command, DEBUG)
-        arduinoResponse = bridge.receiveMessage(DEBUG)
-        if arduinoResponse is not None:
-            print(arduinoResponse)
+    robotCoords = homingSequence(joystick, bridge, DEBUG)
 
 if __name__ == "__main__":
     main()

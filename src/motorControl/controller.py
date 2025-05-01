@@ -31,6 +31,17 @@ class controller:
                 print("\ncontroller: controller found and initialized")
     
     def findGantryInput(self, debug=False):
+        """Using the hat control on the remote, check for movement in manual mode. Also check to see if program terminated
+        
+            ### Args:
+                debug (bool): Enter debug mode
+
+            ### Returns:
+                command (str): translated command based on input. Want more commands? Add more interpretations to this function
+                terminatorCheck (int): input from button 6. Currently used to exit manual mode
+        
+        """
+
         p.event.pump()
         gantryDir = self.myController.get_hat(MOVEMENT_INPUT)
 
@@ -45,9 +56,6 @@ class controller:
         elif gantryDir[1] == 1:
             command = "U"
 
-        if self.myController.get_button(6) == 1:
-            if debug:
-                print("Exiting Manual Mode")
-            quit()
+        terminatorCheck = self.myController.get_button(6)
 
-        return command
+        return command, terminatorCheck

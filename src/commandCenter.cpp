@@ -31,16 +31,16 @@ void loop() {
         }
 
         if (incMessage == 'U') {   
-            yForward(100, 500);
+            yForward(1, 500);
             }
         else if (incMessage == 'D') {   
-            yBackward(100, 500);
+            yBackward(1, 500);
             }
         else if (incMessage == 'L') {
-            xLeft(100, 500);
+            xLeft(1, 500);
             }
         else if (incMessage == 'R') {
-            xRight(100, 500);
+            xRight(1, 500);
             }
         else if (incMessage == 'Q') {
             Serial.print("Quit program");
