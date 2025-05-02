@@ -2,6 +2,7 @@
 # NEEDS DOCSTRINGS
 import os
 import pygame as p
+from pygame import error
 from src.config import *
 
 class controller:
@@ -13,8 +14,12 @@ class controller:
 
             ### Returns:
                 None
+
+            ### Raises:
+                pygame.error: If no controller is detected, program terminates
         
         """
+    
         #use dummy video driver
         os.environ["SDL_VIDEODRIVER"] = "dummy"
 
@@ -25,7 +30,11 @@ class controller:
         if self.joysticks == 0 and debug:
             print("\ncontroller: no joysticks detected")
         else:
-            self.myController = p.joystick.Joystick(0)
+            try:
+                self.myController = p.joystick.Joystick(0)
+            except error:
+                print("\ncontroller.init: No controller detected. A controller is required to home this device.")
+                quit()
             self.myController.init()
             if debug:
                 print("\ncontroller: controller found and initialized")

@@ -1,0 +1,54 @@
+Date : 2025-05-01 10:45:13
+Directory : c:\Users\carlr\Documents\seniorProject
+Total : 20 files,  749 codes, 159 comments, 280 blanks, all 1188 lines
+
+Languages
++----------+------------+------------+------------+------------+------------+
+| language | files      | code       | comment    | blank      | total      |
++----------+------------+------------+------------+------------+------------+
+| Python   |         14 |        609 |        108 |        233 |        950 |
+| C++      |          4 |        112 |         42 |         33 |        187 |
+| Markdown |          1 |         24 |          0 |         12 |         36 |
+| Ini      |          1 |          4 |          9 |          2 |         15 |
++----------+------------+------------+------------+------------+------------+
+
+Directories
++-----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| path                                                                        | files      | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+| .                                                                           |         20 |        749 |        159 |        280 |      1,188 |
+| . (Files)                                                                   |          2 |         28 |          9 |         14 |         51 |
+| src                                                                         |         18 |        721 |        150 |        266 |      1,137 |
+| src (Files)                                                                 |          3 |         64 |          8 |         17 |         89 |
+| src\comms                                                                   |          1 |         31 |          7 |         17 |         55 |
+| src\learningTests                                                           |          6 |        150 |         61 |         67 |        278 |
+| src\motorControl                                                            |          5 |        250 |         34 |         81 |        365 |
+| src\vision                                                                  |          3 |        226 |         40 |         84 |        350 |
++-----------------------------------------------------------------------------+------------+------------+------------+------------+------------+
+
+Files
++-----------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| filename                                                                    | language | code       | comment    | blank      | total      |
++-----------------------------------------------------------------------------+----------+------------+------------+------------+------------+
+| c:\Users\carlr\Documents\seniorProject\README.md                            | Markdown |         24 |          0 |         12 |         36 |
+| c:\Users\carlr\Documents\seniorProject\platformio.ini                       | Ini      |          4 |          9 |          2 |         15 |
+| c:\Users\carlr\Documents\seniorProject\src\commandCenter.cpp                | C++      |         42 |          3 |          9 |         54 |
+| c:\Users\carlr\Documents\seniorProject\src\comms\bridge.py                  | Python   |         31 |          7 |         17 |         55 |
+| c:\Users\carlr\Documents\seniorProject\src\config.py                        | Python   |         12 |          2 |          4 |         18 |
+| c:\Users\carlr\Documents\seniorProject\src\learningTests\arduinoBridge.cpp  | C++      |          0 |         24 |          6 |         30 |
+| c:\Users\carlr\Documents\seniorProject\src\learningTests\cameraTests.py     | Python   |         10 |          3 |          5 |         18 |
+| c:\Users\carlr\Documents\seniorProject\src\learningTests\communicator.py    | Python   |         12 |          1 |          5 |         18 |
+| c:\Users\carlr\Documents\seniorProject\src\learningTests\controllerInput.py | Python   |         19 |          4 |          7 |         30 |
+| c:\Users\carlr\Documents\seniorProject\src\learningTests\joystickCalls.py   | Python   |         91 |         26 |         36 |        153 |
+| c:\Users\carlr\Documents\seniorProject\src\learningTests\videoTests.py      | Python   |         18 |          3 |          8 |         29 |
+| c:\Users\carlr\Documents\seniorProject\src\main.py                          | Python   |         10 |          3 |          4 |         17 |
+| c:\Users\carlr\Documents\seniorProject\src\motorControl\controller.py       | Python   |         45 |          8 |         18 |         71 |
+| c:\Users\carlr\Documents\seniorProject\src\motorControl\coordTravel.py      | Python   |         43 |          2 |         16 |         61 |
+| c:\Users\carlr\Documents\seniorProject\src\motorControl\homing.py           | Python   |         92 |          9 |         29 |        130 |
+| c:\Users\carlr\Documents\seniorProject\src\motorControl\motorMove.cpp       | C++      |         63 |         15 |         15 |         93 |
+| c:\Users\carlr\Documents\seniorProject\src\motorControl\motorMove.h         | C++      |          7 |          0 |          3 |         10 |
+| c:\Users\carlr\Documents\seniorProject\src\vision\detectPuck.py             | Python   |         33 |          9 |         13 |         55 |
+| c:\Users\carlr\Documents\seniorProject\src\vision\puck.py                   | Python   |        118 |         18 |         41 |        177 |
+| c:\Users\carlr\Documents\seniorProject\src\vision\visionUtil.py             | Python   |         75 |         13 |         30 |        118 |
+| Total                                                                       |          |        749 |        159 |        280 |      1,188 |
++-----------------------------------------------------------------------------+----------+------------+------------+------------+------------+
