@@ -18,12 +18,26 @@ class communicator:
         self.serialComm = serial.Serial(COM, baud) #Com subject to change right now 
         self.serialComm.timeout = 1
 
+    def issueCoordinate(self, coords, debug=False):
+        """Send a coordinate message to arduino via the Serial monitor.
+        
+            ### Args:
+                coords (list): [x,y] coordinates to send to arduino
+                debug (bool): Enter debug mode
+        
+        """
+
+        coordEncoded = f"{coords}\n"
+        self.serialComm.write(coordEncoded.encode())
+        if debug:
+                print(f"\nbridge.issueCoordinate: Sent command: {coords}")
+
     def issueCommand(self, command, debug=False):
         """Send a message to arduino via the Serial monitor.
         
             ### Args:
                 command (str): message to go to Arduino. Be aware that message length matters
-                debug (bool): enter debug mode
+                debug (bool): Enter debug mode
 
             ### Returns:
                 None
@@ -31,7 +45,8 @@ class communicator:
         """
 
         if command is not None:
-            self.serialComm.write(command.encode())
+            commandEncoded = f"{command}\n"
+            self.serialComm.write(commandEncoded.encode())
             if debug:
                 print(f"\nbridge.issueCommand: Sent command: {command}")
 
@@ -47,6 +62,8 @@ class communicator:
         """
 
         if self.serialComm.in_waiting > 0:
+            if debug:
+                print("receiveMessage: message found")
             message = self.serialComm.read(self.serialComm.in_waiting).decode()
         else:
             message = None

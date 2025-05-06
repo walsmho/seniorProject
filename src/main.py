@@ -1,6 +1,5 @@
 from src.config import *
 from src.motorControl.controller import controller
-#from src.motorControl.homing import homingSequence
 from src.motorControl.robotPaddle import paddle
 from src.comms.bridge import communicator
 
@@ -17,7 +16,7 @@ def main():
 
     for _ in range(5):
         roboPaddle.getUserCoords()
-        roboPaddle.gotoLinear(bridge, DEBUG)
+        roboPaddle.gotoBresenham(bridge, DEBUG) #Big problemo - entire code stops here as it issues commands to get to coordinate
         roboPaddle.update()
 
 if __name__ == "__main__":

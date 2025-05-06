@@ -131,8 +131,13 @@ class paddle:
 
         """
 
-        x = int(input("Go to coord x: "))
-        y = int(input("Go to coord y: "))
+        try:
+            x = int(input("Go to coord x: "))
+            y = int(input("Go to coord y: "))
+        except ValueError:
+            x=0
+            y=0
+            print("\nrobotPaddle.getUserCoords: VALUE ERROR. Invalid input. Defaulting to 0,0")
         newCoords = [x, y]
         self.newCoords = newCoords
         if debug:
@@ -178,6 +183,9 @@ class paddle:
             print(coords)
             okieDokieY = False
 
+        print(okieDokieX)
+        print(okieDokieY)
+
         return okieDokieX, okieDokieY
 
     def gotoLinear(self, communicator, debug=False):
@@ -193,12 +201,9 @@ class paddle:
         """
 
         xOld, yOld = self.currentCoords
-        print(f"{xOld}, {yOld}")
         xNew, yNew = self.newCoords
-        print(f"{xNew}, {yNew}")
 
         xCheck, yCheck = self.coordCheck(self.newCoords)
-        print(xCheck, yCheck)
 
         deltaX = xNew - xOld
         deltaY = yNew - yOld
@@ -230,6 +235,83 @@ class paddle:
 
         for _ in range(abs(deltaY)):
             communicator.issueCommand(directionY, False)
+
+    def gotoDirect(self, communicator, debug=False):
+        xOld, yOld = self.currentCoords
+        xNew, yNew = self.newCoords
+
+        xCheck, yCheck = self.coordCheck(self.newCoords) 
+
+        deltaX = xNew - xOld
+        deltaY = yNew - yOld
+
+        if debug:
+            print(f"\ngotoDirect: current coords: [{xOld}, {yOld}]")
+            print(f"\ngotoDirect: new coords: [{xNew}, {yNew}]")
+
+        if (xCheck == "inBounds" and yCheck == "inBounds"):
+            if deltaX > 0:
+                directionX = "R"
+            elif deltaX < 0:
+                directionX = "L"
+            
+            if deltaY > 0:
+                directionY = "U"
+            elif deltaY < 0:
+                directionY = "D"
+
+            checkDX = abs(deltaX)
+            checkDY = abs(deltaY)
+            while checkDX != 0 or checkDY != 0:
+                if checkDX != 0:
+                    communicator.issueCommand(directionX, False)
+                    checkDX -= 1
+                if checkDY != 0:
+                    communicator.issueCommand(directionY, False)
+                    checkDY -= 1
+
+            message = communicator.receiveMessage()
+            print(message)
+
+        else:
+            if debug:
+                print(f"\ngotoLinear: invalid coordinate entry. {self.newCoords} out of bounds")
+                self.newCoords = self.currentCoords
+                return
+
+    def gotoBresenham(self, communicator, debug=False):
+        x0, y0 = self.currentCoords
+        x1, y1 = self.newCoords
+
+        xCheck, yCheck = self.coordCheck(self.newCoords)
+
+        if xCheck != "inBounds" or yCheck != "inBounds":
+            return  # Skip movement if out of bounds
+
+        dx = abs(x1 - x0)
+        dy = -abs(y1 - y0)
+        sx = 1 if x0 < x1 else -1
+        sy = 1 if y0 < y1 else -1
+        err = dx + dy  # Error value
+
+        direction_map = {
+            (1, 0): "R", (-1, 0): "L",
+            (0, 1): "U", (0, -1): "D"
+        }
+
+        while True:
+            if x0 == x1 and y0 == y1:
+                break
+
+            e2 = 2 * err
+            if e2 >= dy:
+                x0 += sx
+                communicator.issueCommand(direction_map[(sx, 0)], False)
+                err += dy
+            if e2 <= dx:
+                y0 += sy
+                communicator.issueCommand(direction_map[(0, sy)], False)
+                err += dx
 
     def update(self):
         """Make self.currentCoords update to the newCoords"""

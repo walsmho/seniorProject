@@ -1,5 +1,8 @@
 // BASIC MOTOR DIRECTIONS
 // Look into c++ docstrings?
+
+// NOTE: LABELING MOTORS STEPX AND STEPY INNACURATE WITH HBOT SYSTEM. RENAME TO MOTORLEFT AND MOTORRIGHT
+
 #include <Arduino.h>
 #include "motorMove.h"
 
@@ -19,10 +22,6 @@ void stepMotor(int stepPin, int dirPin, bool dir, int steps) {
 }
 
 void yForward(int steps, int delay) {
-    /**
-         * Move both steppers to make gantry move forward given steps and given time
-         * Detailed description.
-    */
     digitalWrite(DirX, LOW);
     digitalWrite(DirY, HIGH);
 
@@ -56,7 +55,6 @@ void yBackward(int steps, int delay) {
     }
 }
 
-//UNCHARTED TERRITORY
 void xRight(int steps, int delay) {
     digitalWrite(DirX, LOW);
     digitalWrite(DirY, LOW);
@@ -90,3 +88,91 @@ void xLeft(int steps, int delay) {
         delayMicroseconds(delay);
     }
 }
+
+// void moveToCoord(int currentX, int currentY, int targetX, int targetY, int delayMicros) {
+//     int dx = targetX - currentX;
+//     int dy = targetY - currentY;
+
+//     int steps = max(abs(dx), abs(dy));
+//     if (steps == 0) return;  // No movement needed
+
+//     float stepX = (float)dx / steps;
+//     float stepY = (float)dy / steps;
+
+//     float posX = currentX;
+//     float posY = currentY;
+
+//     for (int i = 0; i < steps; i++) {
+//         posX += stepX;
+//         posY += stepY;
+
+//         int roundedX = round(posX);
+//         int roundedY = round(posY);
+
+//         int deltaX = roundedX - currentX;
+//         int deltaY = roundedY - currentY;
+
+//         if (deltaX == 0 && deltaY == 0) continue;
+
+//         currentX = roundedX;
+//         currentY = roundedY;
+
+//         // Determine motor directions for H-bot
+//         int dirA, dirB;
+//         if (deltaX != 0 && deltaY == 0) {
+//             // Pure X movement: both motors same direction
+//             dirA = (deltaX > 0) ? HIGH : LOW;
+//             dirB = dirA;
+//         } else if (deltaY != 0 && deltaX == 0) {
+//             // Pure Y movement: motors opposite direction
+//             dirA = (deltaY > 0) ? HIGH : LOW;
+//             dirB = (deltaY > 0) ? LOW : HIGH;
+//         } else {
+//             // Diagonal movement (combined X and Y)
+//             int xSign = (deltaX > 0) ? 1 : -1;
+//             int ySign = (deltaY > 0) ? 1 : -1;
+
+//             // Diagonal: set directions based on vector sum
+//             dirA = (xSign + ySign > 0) ? HIGH : LOW;
+//             dirB = (xSign - ySign > 0) ? HIGH : LOW;
+//         }
+
+//         digitalWrite(DirX, dirA); // Motor A
+//         digitalWrite(DirY, dirB); // Motor B
+
+//         // Pulse both motors
+//         digitalWrite(StepX, HIGH);
+//         digitalWrite(StepY, HIGH);
+//         delayMicroseconds(delayMicros);
+//         digitalWrite(StepX, LOW);
+//         digitalWrite(StepY, LOW);
+//         delayMicroseconds(delayMicros);
+//     }
+// }
+
+// bool findIncomingCoords(const String& input, Coord& from, Coord& to) {
+//     String data = input;
+//     if (!data.endsWith("\n")) {
+//         data += '\n';
+//     }
+
+//     int sep = data.indexOf('|');
+//     if (sep == -1) return false;
+
+//     String first = data.substring(2, sep);  // Skip "G:"
+//     String second = data.substring(sep + 1);
+//     second.trim();  // Remove newline and extra spaces
+
+//     int comma1 = first.indexOf(',');
+//     int comma2 = second.indexOf(',');
+
+//     if (comma1 == -1 || comma2 == -1) return false;
+
+//     from.x = first.substring(0, comma1).toInt();
+//     from.y = first.substring(comma1 + 1).toInt();
+
+//     to.x = second.substring(0, comma2).toInt();
+//     to.y = second.substring(comma2 + 1).toInt();
+
+//     return true;
+// }
