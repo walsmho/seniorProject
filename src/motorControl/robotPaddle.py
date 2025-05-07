@@ -192,9 +192,9 @@ class paddle:
         """Travel to any coordinate within hockey table bounds, one axis at a time
         
             ### Args:
-                newCoords [list]: [x,y] coordinates of desired new location
-                communicator [class object]: communication bridge between arduino and python
-            
+                communicator (class object): communication bridge between arduino and python
+                debug (bool): Enter debug mode
+                
             ### Returns:
                 None
         
@@ -204,6 +204,12 @@ class paddle:
         xNew, yNew = self.newCoords
 
         xCheck, yCheck = self.coordCheck(self.newCoords)
+
+        if xCheck != "inBounds" or yCheck != "inBounds":
+            if debug:
+                print(f"\ngotoLinear: invalid coordinate entry. {self.newCoords} out of bounds")
+                self.newCoords = self.currentCoords
+            return
 
         deltaX = xNew - xOld
         deltaY = yNew - yOld
@@ -224,94 +230,59 @@ class paddle:
             elif deltaY < 0:
                 directionY = "D"
 
-        else:
-            if debug:
-                print(f"\ngotoLinear: invalid coordinate entry. {self.newCoords} out of bounds")
-                self.newCoords = self.currentCoords
-                return
-
         for _ in range(abs(deltaX)):
             communicator.issueCommand(directionX, False)
 
         for _ in range(abs(deltaY)):
             communicator.issueCommand(directionY, False)
 
-    def gotoDirect(self, communicator, debug=False):
+    def gotoBresenham(self, communicator, debug=False):
+        """Python based iterative style movement function. Go to any coordinate within hockey table bounds in a straight line
+        
+            ### Args:
+                communicator (class object): communication bridge between arduino and python
+                debug (bool): Enter debug mode
+                
+            ### Returns:
+                None
+        
+        """
+    
         xOld, yOld = self.currentCoords
         xNew, yNew = self.newCoords
-
-        xCheck, yCheck = self.coordCheck(self.newCoords) 
-
-        deltaX = xNew - xOld
-        deltaY = yNew - yOld
-
-        if debug:
-            print(f"\ngotoDirect: current coords: [{xOld}, {yOld}]")
-            print(f"\ngotoDirect: new coords: [{xNew}, {yNew}]")
-
-        if (xCheck == "inBounds" and yCheck == "inBounds"):
-            if deltaX > 0:
-                directionX = "R"
-            elif deltaX < 0:
-                directionX = "L"
-            
-            if deltaY > 0:
-                directionY = "U"
-            elif deltaY < 0:
-                directionY = "D"
-
-            checkDX = abs(deltaX)
-            checkDY = abs(deltaY)
-            while checkDX != 0 or checkDY != 0:
-                if checkDX != 0:
-                    communicator.issueCommand(directionX, False)
-                    checkDX -= 1
-                if checkDY != 0:
-                    communicator.issueCommand(directionY, False)
-                    checkDY -= 1
-
-            message = communicator.receiveMessage()
-            print(message)
-
-        else:
-            if debug:
-                print(f"\ngotoLinear: invalid coordinate entry. {self.newCoords} out of bounds")
-                self.newCoords = self.currentCoords
-                return
-
-    def gotoBresenham(self, communicator, debug=False):
-        x0, y0 = self.currentCoords
-        x1, y1 = self.newCoords
 
         xCheck, yCheck = self.coordCheck(self.newCoords)
 
         if xCheck != "inBounds" or yCheck != "inBounds":
-            return  # Skip movement if out of bounds
+            if debug:
+                print(f"\ngotoBresenham: invalid coordinate entry. {self.newCoords} out of bounds")
+                self.newCoords = self.currentCoords
+            return
 
-        dx = abs(x1 - x0)
-        dy = -abs(y1 - y0)
-        sx = 1 if x0 < x1 else -1
-        sy = 1 if y0 < y1 else -1
-        err = dx + dy  # Error value
+        deltaX = abs(xNew - xOld)
+        deltaY = -abs(yNew - yOld)
+        sx = 1 if x0 < xNew else -1
+        sy = 1 if y0 < yNew else -1
+        err = deltaX + deltaY
 
-        direction_map = {
+        dirMap = {
             (1, 0): "R", (-1, 0): "L",
             (0, 1): "U", (0, -1): "D"
         }
 
         while True:
-            if x0 == x1 and y0 == y1:
+            if xOld == xNew and yOld == yNew:
                 break
 
             e2 = 2 * err
-            if e2 >= dy:
+            if e2 >= deltaY:
                 x0 += sx
-                communicator.issueCommand(direction_map[(sx, 0)], False)
-                err += dy
-            if e2 <= dx:
+                communicator.issueCommand(dirMap[(sx, 0)], False)
+                err += deltaY
+            if e2 <= deltaX:
                 y0 += sy
-                communicator.issueCommand(direction_map[(0, sy)], False)
-                err += dx
+                communicator.issueCommand(dirMap[(0, sy)], False)
+                err += deltaX
 
     def goFast(self, communicator, debug=False):
         print(self.newCoords)

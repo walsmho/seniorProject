@@ -26,7 +26,7 @@ class communicator:
                 debug (bool): Enter debug mode
         
         """
-
+        # Need to put in format easy for arduino to deconstruct
         command = f"GOTO A{coords[0]} B{coords[1]} F{500}\n"
     
         # Send command to Arduino
