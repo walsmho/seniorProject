@@ -26,7 +26,7 @@ class communicator:
                 debug (bool): Enter debug mode
         
         """
-
+        # Need to put in format easy for arduino to deconstruct
         coordEncoded = f"{coords}\n"
         self.serialComm.write(coordEncoded.encode())
         if debug:
