@@ -8,7 +8,7 @@ def main():
     # Begin vision loop
     # Respond accordingly
     joystick = controller()
-    bridge = communicator()
+    bridge = communicator('COM7',115200)
     roboPaddle = paddle()
     
     
@@ -16,7 +16,7 @@ def main():
 
     for _ in range(5):
         roboPaddle.getUserCoords()
-        roboPaddle.gotoBresenham(bridge, DEBUG) #Big problemo - entire code stops here as it issues commands to get to coordinate
+        roboPaddle.goFast(bridge, DEBUG) #Big problemo - entire code stops here as it issues commands to get to coordinate
         roboPaddle.update()
 
 if __name__ == "__main__":

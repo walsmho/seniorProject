@@ -1,78 +1,48 @@
 #include <Arduino.h>
 #include "motorControl/motorMove.h"
+#include <motorControl/hBot.h>
 
-bool DEBUG;
-// init vars
+bool DEBUG = false;
 int currentX = 0;
 int currentY = 0;
 
-// NOTE: LABELING MOTORS STEPX AND STEPY INNACURATE WITH HBOT SYSTEM. RENAME TO MOTORLEFT AND MOTORRIGHT
-
 void setup() {
-    //Open Serial for comms
-    Serial.begin(9600);
-    String incMessage;
+  Serial.begin(115200);  // Use a consistent and fast baud rate
 
-    //Set pins for CNC shield
-    const int StepX = 2;
-    const int DirX = 5;
-    const int StepY = 3;
-    const int DirY = 6;
-    pinMode(StepX,OUTPUT);
-    pinMode(DirX,OUTPUT);
-    pinMode(StepY,OUTPUT);
-    pinMode(DirY,OUTPUT);
-
-    DEBUG = false;
+  pinMode(2, OUTPUT); // STEP_PIN_A
+  pinMode(5, OUTPUT); // DIR_PIN_A
+  pinMode(3, OUTPUT); // STEP_PIN_B
+  pinMode(6, OUTPUT); // DIR_PIN_B
 }
 
 void loop() {
-    static String input = "";
+  if (Serial.available()) {
+    String input = Serial.readStringUntil('\n');
+    input.trim();
 
-    while (Serial.available() > 0) {
-        char inChar = Serial.read();
-
-        // Ignore carriage return
-        if (inChar == '\r') continue;
-
-        // End of line -> process input
-        if (inChar == '\n') {
-            input.trim();  // Remove any leading/trailing whitespace
-
-            if (input.startsWith("G:")) {
-                Coord from;
-                Coord to;
-                if (findIncomingCoords(input, from, to)) {
-                    moveToCoord(from.x, from.y, to.x, to.y, 500);
-                } else {
-                    Serial.println("Invalid input. Use format: G:x1,y1|x2,y2");
-                }
-            } 
-            else if (input.length() == 1) {
-                char command = input.charAt(0);
-                if (command == 'U') {
-                    yForward(1, 500); currentY++;
-                } else if (command == 'D') {
-                    yBackward(1, 500); currentY--;
-                } else if (command == 'L') {
-                    xLeft(1, 500); currentX--;
-                } else if (command == 'R') {
-                    xRight(1, 500); currentX++;
-                } else if (command == 'Q') {
-                    Serial.println("Quit program");
-                } else {
-                    Serial.println("Unknown command");
-                }
-            } 
-            else {
-                Serial.println("Invalid input:");
-                Serial.println(input);
-            }
-
-            input = "";  // Clear buffer
-        } 
-        else {
-            input += inChar;  // Accumulate
-        }
+    if (input.startsWith("GOTO")) {
+      parseAndMove(input);  // handled by your helper
     }
+    else if (input.length() == 1) {
+      char command = input.charAt(0);
+
+      if (command == 'U') {
+        yForward(1, 500); currentY++;
+      } else if (command == 'D') {
+        yBackward(1, 500); currentY--;
+      } else if (command == 'L') {
+        xLeft(1, 500); currentX--;
+      } else if (command == 'R') {
+        xRight(1, 500); currentX++;
+      } else if (command == 'Q') {
+        Serial.println("Quit program");
+      } else {
+        Serial.println("Unknown command");
+      }
+    } 
+    else {
+      Serial.println("Invalid input:");
+      Serial.println(input);
+    }
+  }
 }

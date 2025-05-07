@@ -27,8 +27,10 @@ class communicator:
         
         """
 
-        coordEncoded = f"{coords}\n"
-        self.serialComm.write(coordEncoded.encode())
+        command = f"GOTO A{coords[0]} B{coords[1]} F{500}\n"
+    
+        # Send command to Arduino
+        self.serialComm.write(command.encode())  # Send the command
         if debug:
                 print(f"\nbridge.issueCoordinate: Sent command: {coords}")
 

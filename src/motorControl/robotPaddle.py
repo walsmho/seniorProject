@@ -313,6 +313,10 @@ class paddle:
                 communicator.issueCommand(direction_map[(0, sy)], False)
                 err += dx
 
+    def goFast(self, communicator, debug=False):
+        print(self.newCoords)
+        communicator.issueCoordinate(self.newCoords,500)
+
     def update(self):
         """Make self.currentCoords update to the newCoords"""
         self.currentCoords = self.newCoords
