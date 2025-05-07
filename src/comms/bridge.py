@@ -3,7 +3,7 @@ import serial
 from src.config import *
 
 class communicator:
-    def __init__(self, COM='COM7', baud=9600):
+    def __init__(self, COM='COM7', baud=115200):
         """Create a new connection to the serial monitor using given COM and baud rate
         
             ### Args:
@@ -18,21 +18,21 @@ class communicator:
         self.serialComm = serial.Serial(COM, baud) #Com subject to change right now 
         self.serialComm.timeout = 1
 
-    def issueCoordinate(self, coords, debug=False):
+    def issueCoordinate(self, info, debug=False):
         """Send a coordinate message to arduino via the Serial monitor.
         
             ### Args:
-                coords (list): [x,y] coordinates to send to arduino
+                info (list): info package of deltas, sx, sy, and err
                 debug (bool): Enter debug mode
         
         """
         # Need to put in format easy for arduino to deconstruct
-        command = f"GOTO A{coords[0]} B{coords[1]} F{500}\n"
+        command = f"GOTO dx{info[0]} dy{info[1]} sx{info[2]} sy{info[3]} er{info[4]}\n"
     
         # Send command to Arduino
         self.serialComm.write(command.encode())  # Send the command
         if debug:
-                print(f"\nbridge.issueCoordinate: Sent command: {coords}")
+            print(f"\nbridge.issueCoordinate: Sent command: {command}")
 
     def issueCommand(self, command, debug=False):
         """Send a message to arduino via the Serial monitor.

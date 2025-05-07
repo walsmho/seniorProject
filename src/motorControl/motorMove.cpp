@@ -89,90 +89,69 @@ void xLeft(int steps, int delay) {
     }
 }
 
-// void moveToCoord(int currentX, int currentY, int targetX, int targetY, int delayMicros) {
-//     int dx = targetX - currentX;
-//     int dy = targetY - currentY;
+// deltaX, deltaY: absolute step counts along X and Y
+// sx, sy: +1 or -1 for X and Y directions
+void bresenhamMove(long deltaX, long deltaY, int sx, int sy, long &currentX, long &currentY) {
+    long dx = abs(deltaX);
+    long dy = abs(deltaY);
+    long err = dx - dy;
 
-//     int steps = max(abs(dx), abs(dy));
-//     if (steps == 0) return;  // No movement needed
+    // Loop until we've exhausted both X and Y steps
+    while (dx > 0 || dy > 0) {
+        long e2 = err;
 
-//     float stepX = (float)dx / steps;
-//     float stepY = (float)dy / steps;
+        // X step?
+        if (dx > 0 && e2 > -dy) {
+            if (sx > 0) {
+                xRight(1, 500);
+            } else {
+                xLeft(1, 500);
+            }
+            err -= dy;
+            dx--;
+            currentX += sx; // Update X position
+        }
 
-//     float posX = currentX;
-//     float posY = currentY;
+        // Y step?
+        if (dy > 0 && e2 < dx) {
+            if (sy > 0) {
+                yForward(1, 500);
+            } else {
+                yBackward(1, 500);
+            }
+            err += dx;
+            dy--;
+            currentY += sy; // Update Y position
+        }
+    }
+}
 
-//     for (int i = 0; i < steps; i++) {
-//         posX += stepX;
-//         posY += stepY;
+void parseAndMove(String command) {
+    command.trim();
 
-//         int roundedX = round(posX);
-//         int roundedY = round(posY);
+    if (!command.startsWith("GOTO")) {
+        return;
+    }
 
-//         int deltaX = roundedX - currentX;
-//         int deltaY = roundedY - currentY;
+    // Parse the deltas and other parameters
+    int indexDx = command.indexOf("dx");
+    int indexDy = command.indexOf("dy");
+    int indexSx = command.indexOf("sx");
+    int indexSy = command.indexOf("sy");
+    int indexErr = command.indexOf("er");
 
-//         if (deltaX == 0 && deltaY == 0) continue;
+    if (indexDx == -1 || indexDy == -1 || indexSx == -1 || indexSy == -1 || indexErr == -1) {
+        return;
+    }
 
-//         currentX = roundedX;
-//         currentY = roundedY;
+    // Extract the values from the command string
+    long deltaX = command.substring(indexDx + 2, indexDy).toInt();
+    long deltaY = command.substring(indexDy + 2, indexSx).toInt();
+    int stepDirX = command.substring(indexSx + 2, indexSy).toInt();
+    int stepDirY = command.substring(indexSy + 2, indexErr).toInt();
 
-//         // Determine motor directions for H-bot
-//         int dirA, dirB;
-//         if (deltaX != 0 && deltaY == 0) {
-//             // Pure X movement: both motors same direction
-//             dirA = (deltaX > 0) ? HIGH : LOW;
-//             dirB = dirA;
-//         } else if (deltaY != 0 && deltaX == 0) {
-//             // Pure Y movement: motors opposite direction
-//             dirA = (deltaY > 0) ? HIGH : LOW;
-//             dirB = (deltaY > 0) ? LOW : HIGH;
-//         } else {
-//             // Diagonal movement (combined X and Y)
-//             int xSign = (deltaX > 0) ? 1 : -1;
-//             int ySign = (deltaY > 0) ? 1 : -1;
+    // Perform movement using Bresenham's algorithm or similar
+    bresenhamMove(abs(deltaX), abs(deltaY), stepDirX, stepDirY, currentX, currentY);
 
-//             // Diagonal: set directions based on vector sum
-//             dirA = (xSign + ySign > 0) ? HIGH : LOW;
-//             dirB = (xSign - ySign > 0) ? HIGH : LOW;
-//         }
+}
 
-//         digitalWrite(DirX, dirA); // Motor A
-//         digitalWrite(DirY, dirB); // Motor B
-
-//         // Pulse both motors
-//         digitalWrite(StepX, HIGH);
-//         digitalWrite(StepY, HIGH);
-//         delayMicroseconds(delayMicros);
-//         digitalWrite(StepX, LOW);
-//         digitalWrite(StepY, LOW);
-//         delayMicroseconds(delayMicros);
-//     }
-// }
-
-// bool findIncomingCoords(const String& input, Coord& from, Coord& to) {
-//     String data = input;
-//     if (!data.endsWith("\n")) {
-//         data += '\n';
-//     }
-
-//     int sep = data.indexOf('|');
-//     if (sep == -1) return false;
-
-//     String first = data.substring(2, sep);  // Skip "G:"
-//     String second = data.substring(sep + 1);
-//     second.trim();  // Remove newline and extra spaces
-
-//     int comma1 = first.indexOf(',');
-//     int comma2 = second.indexOf(',');
-
-//     if (comma1 == -1 || comma2 == -1) return false;
-
-//     from.x = first.substring(0, comma1).toInt();
-//     from.y = first.substring(comma1 + 1).toInt();
-
-//     to.x = second.substring(0, comma2).toInt();
-//     to.y = second.substring(comma2 + 1).toInt();
-
-//     return true;
-// }

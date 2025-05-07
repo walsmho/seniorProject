@@ -2,9 +2,9 @@
 #include "motorControl/motorMove.h"
 #include <motorControl/hBot.h>
 
-bool DEBUG = false;
-int currentX = 0;
-int currentY = 0;
+bool DEBUG = true;
+long currentX;
+long currentY;
 
 void setup() {
   Serial.begin(115200);  // Use a consistent and fast baud rate
@@ -21,7 +21,7 @@ void loop() {
     input.trim();
 
     if (input.startsWith("GOTO")) {
-      parseAndMove(input);  // handled by your helper
+      parseAndMove(input);
     }
     else if (input.length() == 1) {
       char command = input.charAt(0);
@@ -45,4 +45,5 @@ void loop() {
       Serial.println(input);
     }
   }
+  Serial.flush();
 }

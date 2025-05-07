@@ -261,8 +261,8 @@ class paddle:
 
         deltaX = abs(xNew - xOld)
         deltaY = -abs(yNew - yOld)
-        sx = 1 if x0 < xNew else -1
-        sy = 1 if y0 < yNew else -1
+        sx = 1 if xOld < xNew else -1
+        sy = 1 if yOld < yNew else -1
         err = deltaX + deltaY
 
         dirMap = {
@@ -276,17 +276,37 @@ class paddle:
 
             e2 = 2 * err
             if e2 >= deltaY:
-                x0 += sx
+                xOld += sx
                 communicator.issueCommand(dirMap[(sx, 0)], False)
                 err += deltaY
             if e2 <= deltaX:
-                y0 += sy
+                yOld += sy
                 communicator.issueCommand(dirMap[(0, sy)], False)
                 err += deltaX
 
-    def goFast(self, communicator, debug=False):
-        print(self.newCoords)
-        communicator.issueCoordinate(self.newCoords,500)
+    def giveArduinoCoords(self, communicator, debug=False):
+        xOld, yOld = self.currentCoords
+        xNew, yNew = self.newCoords
+
+        xCheck, yCheck = self.coordCheck(self.newCoords)
+
+        if xCheck != "inBounds" or yCheck != "inBounds":
+            if debug:
+                print(f"\ngiveArduinoCoords: invalid coordinate entry. {self.newCoords} out of bounds")
+                self.newCoords = self.currentCoords
+            return
+
+        deltaX = abs(xNew - xOld)
+        deltaY = -abs(yNew - yOld)
+        sx = 1 if xOld < xNew else -1
+        sy = 1 if yOld < yNew else -1
+        err = deltaX + deltaY
+
+        infoPackage = [deltaX, deltaY, sx, sy, err]
+        print(infoPackage)
+        communicator.issueCoordinate(infoPackage)
+        message = communicator.receiveMessage()
+        print(message)
 
     def update(self):
         """Make self.currentCoords update to the newCoords"""
