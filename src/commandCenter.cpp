@@ -18,6 +18,7 @@ void loop() {
     String input = Serial.readStringUntil('\n');
 
     Serial.print(input);
+    
     if (input.startsWith("GOTO")) {
       parseAndMove(input);
     }
@@ -39,9 +40,10 @@ void loop() {
         Serial.println("Unknown command");
       }
     } 
-  else {
-    Serial.println("Invalid input:");
   }
-}
-Serial.flush();
+
+  else {
+      Serial.println("Invalid input:");
+  }
+  Serial.flush();
 }
