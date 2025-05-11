@@ -79,30 +79,6 @@ void xLeft(int steps, int delay) {
     }
 }
 
-
-/*  plotLine(x0, y0, x1, y1)
-        dx = abs(x1 - x0)
-        sx = x0 < x1 ? 1 : -1
-        dy = -abs(y1 - y0)
-        sy = y0 < y1 ? 1 : -1
-        error = dx + dy
-        
-        while true
-            plot(x0, y0)
-            e2 = 2 * error
-            if e2 >= dy
-                if x0 == x1 break
-                error = error + dy
-                x0 = x0 + sx
-            end if
-            if e2 <= dx
-                if y0 == y1 break
-                error = error + dx
-                y0 = y0 + sy
-            end if
-        end while
-*/
-
 // deltaX, deltaY: absolute step counts along X and Y
 // sx, sy: +1 or -1 for X and Y directions
 void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
@@ -120,7 +96,6 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
         if (e2 > -dy && labs(currentX) < dx) {
             err -= dy;
             currentX += sx;
-
             if (sx > 0) xRight(1, 500);
             else xLeft(1, 500);
         }
@@ -128,13 +103,11 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
         if (e2 < dx && labs(currentY) < dy) {
             err += dx;
             currentY += sy;
-
             if (sy > 0) yForward(1, 500);
             else yBackward(1, 500);
         }
     }
 }
-
 
 void parseAndMove(String command) {
     // Parse the deltas and other parameters
