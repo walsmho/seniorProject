@@ -6,9 +6,6 @@
 #include <Arduino.h>
 #include "motorMove.h"
 
-int currentX = 0;
-int currentY = 0;
-
 const int StepX = 2;
 const int DirX = 5;
 const int StepY = 3;
@@ -107,6 +104,9 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
             end if
         end while*/
 
+    long currentX = 0;
+    long currentY = 0;
+
     long dx = labs(deltaX);
     long dy = -labs(deltaY);
     long err = dx + dy;
@@ -115,38 +115,34 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
     while (dx > 0 || dy > 0) {
         int e2 = 2 * err;
 
-/*          if e2 >= deltaY:
-                xOld += sx
-                communicator.issueCommand(dirMap[(sx, 0)], False)
-                err += deltaY
-            if e2 <= deltaX:
-                yOld += sy
-                communicator.issueCommand(dirMap[(0, sy)], False)
-                err += deltaX
-*/
-
         // X step?
         if (e2 >= dy) {
+            if (currentX == dx) {
+                break;
+            }
             if (sx > 0) {
                 xRight(1, 500);
             } else {
                 xLeft(1, 500);
             }
             
-            currentX += sx;
             err += dy;
+            currentX += sx;
         }
 
         // Y step?
         if (e2 <= dx) {
+            if (currentY == dy) {
+                break;
+            }
             if (sy > 0) {
                 yForward(1, 500);
             } else {
                 yBackward(1, 500);
             }
             
-            currentY += sy;
             err += dx;
+            currentY += sy;
         }
     }
 }
