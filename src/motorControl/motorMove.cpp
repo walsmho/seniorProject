@@ -158,8 +158,12 @@ void parseAndMove(String command) {
     int stepDirX = strtol(command.substring(indexSx + 2, indexSy).c_str(), NULL, 10);
     int stepDirY = strtol(command.substring(indexSy + 2, indexErr).c_str(), NULL, 10);
 
+    yForward(8, 500);
+
+
+
     // Perform movement using Bresenham's algorithm or similar
-    bresenhamMove(abs(deltaX), abs(deltaY), stepDirX, stepDirY);
+    // bresenhamMove(abs(deltaX), abs(deltaY), stepDirX, stepDirY);
 
     Serial.println("X: ");
     Serial.print(currentX);   
