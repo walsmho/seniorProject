@@ -83,25 +83,25 @@ void xLeft(int steps, int delay) {
 // sx, sy: +1 or -1 for X and Y directions
 void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
     long dx = labs(deltaX);
-    long dy = labs(deltaY);
+    long dy = -labs(deltaY);
 
     long currentX = 0;
     long currentY = 0;
 
-    long err = dx - dy;
+    long err = dx + dy;
 
-    while (labs(currentX) < dx || labs(currentY) < dy) {
+    while (labs(currentX) < dx || labs(currentY) < -dy) {
         long e2 = 2 * err;
 
-        if (e2 > -dy && labs(currentX) < dx) {
-            err -= dy;
+        if (e2 > dy && labs(currentX) < dx) {
+            err += dy;
             currentX += sx;
 
             if (sx > 0) xRight(1, 500);
             else xLeft(1, 500);
         }
 
-        if (e2 < dx && labs(currentY) < dy) {
+        if (e2 < dx && labs(currentY) < -dy) {
             err += dx;
             currentY += sy;
 
