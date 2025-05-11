@@ -107,11 +107,6 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
             end if
         end while*/
 
-
-
-
-
-
     long dx = labs(deltaX);
     long dy = labs(deltaY);
     long err = dx + dy;
@@ -121,29 +116,29 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
         int e2 = 2 * err;
 
         // X step?
-        if (dx > 0 && e2 > -dy) {
+        if (dx > 0 && e2 > dy) {
             if (sx > 0) {
                 xRight(1, 500);
-                currentX += 1;
             } else {
                 xLeft(1, 500);
-                currentX -= 1;
             }
-            err -= dy;
+            err += dy;
             dx--;
+
+            currentX += sx;
         }
 
         // Y step?
         if (dy > 0 && e2 < dx) {
             if (sy > 0) {
                 yForward(1, 500);
-                currentY += 1;
             } else {
                 yBackward(1, 500);
-                currentY -= 1;
             }
             err += dx;
             dy--;
+
+            currentY += sy;
         }
     }
 }
