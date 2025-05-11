@@ -123,7 +123,9 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
 
 void parseAndMove(String command) {
     // Parse the deltas and other parameters
+    Serial.println("X: ");
     Serial.print(currentX);
+    Serial.print("Y: ");
     Serial.print(currentY);
     int indexDx = command.indexOf("dx");
     int indexDy = command.indexOf("dy");
