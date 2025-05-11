@@ -15,8 +15,10 @@ def main():
 
     for i in range(10):
         roboPaddle.getUserCoords()
-        roboPaddle.giveArduinoCoords(bridge, DEBUG)
+        roboPaddle.goto(bridge, None, DEBUG)
         bridge.findMessage()
+        roboPaddle.update()
+        roboPaddle.goto(bridge, [0,0], DEBUG)
         roboPaddle.update()
         print(f"Succesful coordinate update, iteration {i+1}")
 

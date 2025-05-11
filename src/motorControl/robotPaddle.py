@@ -236,7 +236,7 @@ class paddle:
         for _ in range(abs(deltaY)):
             communicator.issueCommand(directionY, False)
 
-    def gotoBresenham(self, communicator, debug=False):
+    def pyendBresenham(self, communicator, debug=False):
         """Python based iterative style movement function. Go to any coordinate within hockey table bounds in a straight line
         
             ### Args:
@@ -284,8 +284,22 @@ class paddle:
                 communicator.issueCommand(dirMap[(0, sy)], False)
                 err += deltaX
 
-    def giveArduinoCoords(self, communicator, debug=False):
+    def goto(self, communicator, newCoords=None, debug=False):
+        """Arduino end iterative movement function. Go to any coordinate within hockey table bounds in a straight line
+        
+            ### Args:
+                communicator (class object): communication bridge between arduino and python
+                newCoords (list): [x,y] coords to go to. If None, uses internal
+                debug (bool): Enter debug mode
+                
+            ### Returns:
+                None
+        
+        """
+
         xOld, yOld = self.currentCoords
+        if newCoords != None:
+            self.newCoords = newCoords[0], newCoords[1]
         xNew, yNew = self.newCoords
 
         xCheck, yCheck = self.coordCheck(self.newCoords)
