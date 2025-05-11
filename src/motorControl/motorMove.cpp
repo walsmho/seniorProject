@@ -14,16 +14,6 @@ const int DirX = 5;
 const int StepY = 3;
 const int DirY = 6;
 
-void stepMotor(int stepPin, int dirPin, bool dir, int steps) {
-    digitalWrite(dirPin, dir); // Set direction: LOW or HIGH
-    for(int x = 0; x < steps; x++) {
-        digitalWrite(stepPin, HIGH);
-        delayMicroseconds(500);
-        digitalWrite(stepPin, LOW);
-        delayMicroseconds(500);
-    }
-}
-
 void yForward(int steps, int delay) {
     digitalWrite(DirX, LOW);
     digitalWrite(DirY, HIGH);
@@ -94,14 +84,14 @@ void xLeft(int steps, int delay) {
 
 // deltaX, deltaY: absolute step counts along X and Y
 // sx, sy: +1 or -1 for X and Y directions
-void bresenhamMove(long deltaX, long deltaY, int sx, int sy, int currentX, int currentY) {
+void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
     long dx = labs(deltaX);
     long dy = labs(deltaY);
-    long err = dx - dy;
+    long err = dx + dy;
 
     // Loop until we've exhausted both X and Y steps
     while (dx > 0 || dy > 0) {
-        long e2 = err;
+        int e2 = 2 * err;
 
         // X step?
         if (dx > 0 && e2 > -dy) {
@@ -133,6 +123,8 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy, int currentX, int c
 
 void parseAndMove(String command) {
     // Parse the deltas and other parameters
+    Serial.print(currentX);
+    Serial.print(currentY);
     int indexDx = command.indexOf("dx");
     int indexDy = command.indexOf("dy");
     int indexSx = command.indexOf("sx");
@@ -144,13 +136,13 @@ void parseAndMove(String command) {
     }
 
     // Extract the values from the command string
+    // Housekeeping: switch from strtol to toint
     long deltaX = strtol(command.substring(indexDx + 2, indexDy).c_str(), NULL, 10);
     long deltaY = strtol(command.substring(indexDy + 2, indexSx).c_str(), NULL, 10);
     int stepDirX = strtol(command.substring(indexSx + 2, indexSy).c_str(), NULL, 10);
     int stepDirY = strtol(command.substring(indexSy + 2, indexErr).c_str(), NULL, 10);
 
     // Perform movement using Bresenham's algorithm or similar
-    bresenhamMove(abs(deltaX), abs(deltaY), stepDirX, stepDirY, currentX, currentY);
+    bresenhamMove(abs(deltaX), abs(deltaY), stepDirX, stepDirY);
 
 }
-

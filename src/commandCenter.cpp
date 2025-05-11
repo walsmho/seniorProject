@@ -15,35 +15,40 @@ void setup() {
 }
 
 void loop() {
-  if (Serial.available()) {
-    String input = Serial.readStringUntil('\n');
+  // if (Serial.available()) {
+  //   String input = Serial.readStringUntil('\n');
 
-    Serial.print(input);
-    if (input.startsWith("GOTO")) {
+  //   Serial.print(input);
+  //   if (input.startsWith("GOTO")) {
       
-      parseAndMove(input);
-    }
-    else if (input.length() == 1) {
-      char command = input.charAt(0);
+  //     parseAndMove(input);
+  //   }
 
-      if (command == 'U') {
-        yForward(1, 500);
-      } else if (command == 'D') {
-        yBackward(1, 500);
-      } else if (command == 'L') {
-        xLeft(1, 500);
-      } else if (command == 'R') {
-        xRight(1, 500);
-      } else if (command == 'Q') {
-        Serial.println("Quit program");
-      } else {
-        Serial.println("Unknown command");
-      }
-    } 
-    else {
-      Serial.println("Invalid input:");
-      Serial.println(input);
-    }
+  if (Serial) {
+    String input = "GOTO dx113 dy748 sx1 sy1 er861\n";
+    parseAndMove(input);
   }
-  Serial.flush();
+
+  // else if (input.length() == 1) {
+  //   char command = input.charAt(0);
+
+  //   if (command == 'U') {
+  //     yForward(1, 500);
+  //   } else if (command == 'D') {
+  //     yBackward(1, 500);
+  //   } else if (command == 'L') {
+  //     xLeft(1, 500);
+  //   } else if (command == 'R') {
+  //     xRight(1, 500);
+  //   } else if (command == 'Q') {
+  //     Serial.println("Quit program");
+  //   } else {
+  //     Serial.println("Unknown command");
+  //   }
+  // } 
+  else {
+    Serial.println("Invalid input:");
+  }
+// }
+// Serial.flush();
 }
