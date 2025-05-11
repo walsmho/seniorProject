@@ -85,7 +85,7 @@ void xLeft(int steps, int delay) {
 // deltaX, deltaY: absolute step counts along X and Y
 // sx, sy: +1 or -1 for X and Y directions
 void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
-    /*    plotLine(x0, y0, x1, y1)
+    /*  plotLine(x0, y0, x1, y1)
         dx = abs(x1 - x0)
         sx = x0 < x1 ? 1 : -1
         dy = -abs(y1 - y0)
@@ -116,29 +116,29 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
         int e2 = 2 * err;
 
         // X step?
-        if (dx > 0 && e2 > dy) {
+        if (dx > 0 && e2 > -dy) {
             if (sx > 0) {
                 xRight(1, 500);
+                currentX += 1;
             } else {
                 xLeft(1, 500);
+                currentX -= 1;
             }
-            err += dy;
+            err -= dy;
             dx--;
-
-            currentX += sx;
         }
 
         // Y step?
         if (dy > 0 && e2 < dx) {
             if (sy > 0) {
                 yForward(1, 500);
+                currentY += 1;
             } else {
                 yBackward(1, 500);
+                currentY -= 1;
             }
             err += dx;
             dy--;
-
-            currentY += sy;
         }
     }
 }
