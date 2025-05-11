@@ -106,44 +106,35 @@ void xLeft(int steps, int delay) {
 // deltaX, deltaY: absolute step counts along X and Y
 // sx, sy: +1 or -1 for X and Y directions
 void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
+    long dx = labs(deltaX);
+    long dy = labs(deltaY);
+
     long currentX = 0;
     long currentY = 0;
 
-    long dx = labs(deltaX);
-    long dy = -labs(deltaY);
-    long err = dx + dy;
+    long err = dx - dy;
 
-    // Loop until we've exhausted both X and Y steps
-    while (true) {
-        int e2 = 2 * err;
+    while (labs(currentX) < dx || labs(currentY) < dy) {
+        long e2 = 2 * err;
 
-        // X step?
-        if (e2 >= dy) {
-            if (currentX == dx) {break;}
-            err += dy;
+        if (e2 > -dy && labs(currentX) < dx) {
+            err -= dy;
             currentX += sx;
-            
-            if (sx > 0) {
-                xRight(1, 500);
-            } else {
-                xLeft(1, 500);
-            }
+
+            if (sx > 0) xRight(1, 500);
+            else xLeft(1, 500);
         }
 
-        // Y step?
-        if (e2 <= dx) {
-            if (currentY == dy) {break;}
+        if (e2 < dx && labs(currentY) < dy) {
             err += dx;
             currentY += sy;
 
-            if (sy > 0) {
-                yForward(1, 500);
-            } else {
-                yBackward(1, 500);
-            }
+            if (sy > 0) yForward(1, 500);
+            else yBackward(1, 500);
         }
     }
 }
+
 
 void parseAndMove(String command) {
     // Parse the deltas and other parameters
