@@ -297,14 +297,21 @@ class paddle:
             return
 
         deltaX = abs(xNew - xOld)
-        deltaY = -abs(yNew - yOld)
-        sx = 1 if xOld < xNew else -1
-        sy = 1 if yOld < yNew else -1
+        deltaY = abs(yNew - yOld)
+        if xOld < xNew:
+            sx = 1
+        else:
+            sx = -1
+        if yOld < yNew:
+            sy = 1
+        else:
+            sy = -1
         err = deltaX + deltaY
 
         infoPackage = [deltaX, deltaY, sx, sy, err]
         print(f"\nsending package {infoPackage}")
         communicator.issueCoordinate(infoPackage)
+        communicator.findMessage()
         print("\ninfoPackage succesfully sent")
         return
 
