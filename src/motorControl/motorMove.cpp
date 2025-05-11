@@ -96,7 +96,6 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
         if (e2 > dy && labs(currentX) < dx) {
             err += dy;
             currentX += sx;
-
             if (sx > 0) xRight(1, 500);
             else xLeft(1, 500);
         }
@@ -104,13 +103,11 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
         if (e2 < dx && labs(currentY) < -dy) {
             err += dx;
             currentY += sy;
-
             if (sy > 0) yForward(1, 500);
             else yBackward(1, 500);
         }
     }
 }
-
 
 void parseAndMove(String command) {
     // Parse the deltas and other parameters
