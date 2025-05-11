@@ -114,37 +114,33 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
     long err = dx + dy;
 
     // Loop until we've exhausted both X and Y steps
-    while (dx > 0 || dy > 0) {
+    while (true) {
         int e2 = 2 * err;
 
         // X step?
         if (e2 >= dy) {
-            if (currentX == dx) {
-                break;
-            }
+            if (currentX == dx) {break;}
+            err += dy;
+            currentX += sx;
+            
             if (sx > 0) {
                 xRight(1, 500);
             } else {
                 xLeft(1, 500);
             }
-            
-            err += dy;
-            currentX += sx;
         }
 
         // Y step?
         if (e2 <= dx) {
-            if (currentY == dy) {
-                break;
-            }
+            if (currentY == dy) {break;}
+            err += dx;
+            currentY += sy;
+
             if (sy > 0) {
                 yForward(1, 500);
             } else {
                 yBackward(1, 500);
             }
-            
-            err += dx;
-            currentY += sy;
         }
     }
 }
