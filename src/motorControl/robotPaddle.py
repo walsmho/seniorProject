@@ -306,6 +306,7 @@ class paddle:
             sy = 1
         else:
             sy = -1
+
         err = deltaX + deltaY
 
         infoPackage = [deltaX, deltaY, sx, sy, err]

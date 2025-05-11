@@ -108,37 +108,45 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
         end while*/
 
     long dx = labs(deltaX);
-    long dy = labs(deltaY);
+    long dy = -labs(deltaY);
     long err = dx + dy;
 
     // Loop until we've exhausted both X and Y steps
     while (dx > 0 || dy > 0) {
         int e2 = 2 * err;
 
+/*          if e2 >= deltaY:
+                xOld += sx
+                communicator.issueCommand(dirMap[(sx, 0)], False)
+                err += deltaY
+            if e2 <= deltaX:
+                yOld += sy
+                communicator.issueCommand(dirMap[(0, sy)], False)
+                err += deltaX
+*/
+
         // X step?
-        if (dx > 0 && e2 > -dy) {
+        if (e2 >= dy) {
             if (sx > 0) {
                 xRight(1, 500);
-                currentX += 1;
             } else {
                 xLeft(1, 500);
-                currentX -= 1;
             }
-            err -= dy;
-            dx--;
+            
+            currentX += sx;
+            err += dy;
         }
 
         // Y step?
-        if (dy > 0 && e2 < dx) {
+        if (e2 <= dx) {
             if (sy > 0) {
                 yForward(1, 500);
-                currentY += 1;
             } else {
                 yBackward(1, 500);
-                currentY -= 1;
             }
+            
+            currentY += sy;
             err += dx;
-            dy--;
         }
     }
 }
@@ -159,8 +167,6 @@ void parseAndMove(String command) {
     int stepDirY = strtol(command.substring(indexSy + 2, indexErr).c_str(), NULL, 10);
 
     yForward(8, 500);
-
-
 
     // Perform movement using Bresenham's algorithm or similar
     // bresenhamMove(abs(deltaX), abs(deltaY), stepDirX, stepDirY);
