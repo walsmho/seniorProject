@@ -4,7 +4,7 @@ import sys
 debug = True
 
 #load image, run test
-testImg = cv.imread("learning\\theSun.jpg")
+testImg = cv.imread("src\\learningTests\\theSun.jpg")
 if testImg is None and debug == True:
     sys.exit("cameraTests error: could not read image {}".format(testImg))
 

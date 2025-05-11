@@ -11,13 +11,14 @@ def main():
     bridge = communicator()
     roboPaddle = paddle()
     
-    
     roboPaddle.homingSequence(joystick, bridge, DEBUG)
 
-    for _ in range(5):
+    for i in range(10):
         roboPaddle.getUserCoords()
         roboPaddle.giveArduinoCoords(bridge, DEBUG)
+        bridge.findMessage()
         roboPaddle.update()
+        print(f"Succesful coordinate update, iteration {i+1}")
 
 if __name__ == "__main__":
     main()

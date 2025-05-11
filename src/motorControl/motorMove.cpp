@@ -2,9 +2,12 @@
 // Look into c++ docstrings?
 
 // NOTE: LABELING MOTORS STEPX AND STEPY INNACURATE WITH HBOT SYSTEM. RENAME TO MOTORLEFT AND MOTORRIGHT
-
+// CURRENT PROBLEM: PASS COORDINATES 255 AND YOU HAVE A BIT PROBLEM. SOME VARIABL
 #include <Arduino.h>
 #include "motorMove.h"
+
+int currentX = 0;
+int currentY = 0;
 
 const int StepX = 2;
 const int DirX = 5;
@@ -91,9 +94,9 @@ void xLeft(int steps, int delay) {
 
 // deltaX, deltaY: absolute step counts along X and Y
 // sx, sy: +1 or -1 for X and Y directions
-void bresenhamMove(long deltaX, long deltaY, int sx, int sy, long &currentX, long &currentY) {
-    long dx = abs(deltaX);
-    long dy = abs(deltaY);
+void bresenhamMove(long deltaX, long deltaY, int sx, int sy, int currentX, int currentY) {
+    long dx = labs(deltaX);
+    long dy = labs(deltaY);
     long err = dx - dy;
 
     // Loop until we've exhausted both X and Y steps
@@ -104,35 +107,31 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy, long &currentX, lon
         if (dx > 0 && e2 > -dy) {
             if (sx > 0) {
                 xRight(1, 500);
+                currentX += 1;
             } else {
                 xLeft(1, 500);
+                currentX -= 1;
             }
             err -= dy;
             dx--;
-            currentX += sx; // Update X position
         }
 
         // Y step?
         if (dy > 0 && e2 < dx) {
             if (sy > 0) {
                 yForward(1, 500);
+                currentY += 1;
             } else {
                 yBackward(1, 500);
+                currentY -= 1;
             }
             err += dx;
             dy--;
-            currentY += sy; // Update Y position
         }
     }
 }
 
 void parseAndMove(String command) {
-    command.trim();
-
-    if (!command.startsWith("GOTO")) {
-        return;
-    }
-
     // Parse the deltas and other parameters
     int indexDx = command.indexOf("dx");
     int indexDy = command.indexOf("dy");
@@ -145,10 +144,10 @@ void parseAndMove(String command) {
     }
 
     // Extract the values from the command string
-    long deltaX = command.substring(indexDx + 2, indexDy).toInt();
-    long deltaY = command.substring(indexDy + 2, indexSx).toInt();
-    int stepDirX = command.substring(indexSx + 2, indexSy).toInt();
-    int stepDirY = command.substring(indexSy + 2, indexErr).toInt();
+    long deltaX = strtol(command.substring(indexDx + 2, indexDy).c_str(), NULL, 10);
+    long deltaY = strtol(command.substring(indexDy + 2, indexSx).c_str(), NULL, 10);
+    int stepDirX = strtol(command.substring(indexSx + 2, indexSy).c_str(), NULL, 10);
+    int stepDirY = strtol(command.substring(indexSy + 2, indexErr).c_str(), NULL, 10);
 
     // Perform movement using Bresenham's algorithm or similar
     bresenhamMove(abs(deltaX), abs(deltaY), stepDirX, stepDirY, currentX, currentY);

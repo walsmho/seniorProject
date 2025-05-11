@@ -303,10 +303,10 @@ class paddle:
         err = deltaX + deltaY
 
         infoPackage = [deltaX, deltaY, sx, sy, err]
-        print(infoPackage)
+        print(f"\nsending package {infoPackage}")
         communicator.issueCoordinate(infoPackage)
-        message = communicator.receiveMessage()
-        print(message)
+        print("\ninfoPackage succesfully sent")
+        return
 
     def update(self):
         """Make self.currentCoords update to the newCoords"""

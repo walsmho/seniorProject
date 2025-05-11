@@ -1,5 +1,6 @@
 # NEEDS DOCSTRINGS
 import serial
+import time
 from src.config import *
 
 class communicator:
@@ -71,3 +72,10 @@ class communicator:
             message = None
 
         return message
+    
+    def findMessage(self, debug=False):
+        while self.serialComm.in_waiting == 0:
+            time.sleep(0.01)  # wait 10ms
+            message = self.receiveMessage()
+            print(message)
+            return
