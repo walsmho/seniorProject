@@ -22,23 +22,23 @@ void loop() {
       parseAndMove(input);
     }
 
-  else if (input.length() == 1) {
-    char command = input.charAt(0);
+    else if (input.length() == 1) {
+      char command = input.charAt(0);
 
-    if (command == 'U') {
-      yForward(1, 500);
-    } else if (command == 'D') {
-      yBackward(1, 500);
-    } else if (command == 'L') {
-      xLeft(1, 500);
-    } else if (command == 'R') {
-      xRight(1, 500);
-    } else if (command == 'Q') {
-      Serial.println("Quit program");
-    } else {
-      Serial.println("Unknown command");
-    }
-  } 
+      if (command == 'U') {
+        yForward(1, 500);
+      } else if (command == 'D') {
+        yBackward(1, 500);
+      } else if (command == 'L') {
+        xLeft(1, 500);
+      } else if (command == 'R') {
+        xRight(1, 500);
+      } else if (command == 'Q') {
+        Serial.println("Quit program");
+      } else {
+        Serial.println("Unknown command");
+      }
+    } 
   else {
     Serial.println("Invalid input:");
   }
