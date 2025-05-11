@@ -40,10 +40,10 @@ void loop() {
         Serial.println("Unknown command");
       }
     } 
+  Serial.flush();
   }
 
   else {
       Serial.println("Invalid input:");
   }
-  Serial.flush();
 }

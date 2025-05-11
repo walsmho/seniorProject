@@ -151,10 +151,6 @@ void parseAndMove(String command) {
     int indexSy = command.indexOf("sy");
     int indexErr = command.indexOf("er");
 
-    if (indexDx == -1 || indexDy == -1 || indexSx == -1 || indexSy == -1 || indexErr == -1) {
-        return;
-    }
-
     // Extract the values from the command string
     // Housekeeping: switch from strtol to toint
     long deltaX = strtol(command.substring(indexDx + 2, indexDy).c_str(), NULL, 10);
