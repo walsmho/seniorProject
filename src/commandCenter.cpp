@@ -1,8 +1,8 @@
 #include <Arduino.h>
 #include "motorControl/motorMove.h"
-#include <motorControl/hBot.h>
 
 bool DEBUG = true;
+int testSpeed = 700;
 
 void setup() {
   Serial.begin(115200);  // Use a consistent and fast baud rate
@@ -27,13 +27,13 @@ void loop() {
       char command = input.charAt(0);
 
       if (command == 'U') {
-        yForward(1, 500);
+        yForward(1, testSpeed);
       } else if (command == 'D') {
-        yBackward(1, 500);
+        yBackward(1, testSpeed);
       } else if (command == 'L') {
-        xLeft(1, 500);
+        xLeft(1, testSpeed);
       } else if (command == 'R') {
-        xRight(1, 500);
+        xRight(1, testSpeed);
       } else if (command == 'Q') {
         Serial.println("Quit program");
       } else {

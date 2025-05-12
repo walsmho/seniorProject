@@ -34,7 +34,7 @@ class communicator:
 
         """
 
-        if len(info) != 4:
+        if len(info) != 5:
             print("\nbridge.issueCoordinate: VALUE ERROR: coordinate package to send to arduino missing cruicial information.")
             print(f"Package length: {len(info)}\nPackage content: {info}")
             return
@@ -99,4 +99,4 @@ class communicator:
         while self.serialComm.in_waiting == 0:
             time.sleep(0.01)  # wait 10ms
             message = self.receiveMessage()
-        return message
+            return message

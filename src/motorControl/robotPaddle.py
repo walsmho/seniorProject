@@ -327,7 +327,7 @@ class paddle:
         infoPackage = [deltaX, deltaY, sx, sy, err]
         print(f"\nsending package {infoPackage}")
         communicator.issueCoordinate(infoPackage)
-        communicator.findMessage()
+        communicator.waitForMessage()
         print("\ninfoPackage succesfully sent")
         return
 
