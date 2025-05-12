@@ -28,6 +28,7 @@ while True:
         newCoordBottom, newCoordTop = createBoundingBox(view, colorMaskPuck, debug=DEBUG)
 
         centerCoord = (((newCoordBottom[0] + newCoordTop[0]) / 2), ((newCoordBottom[1] + newCoordTop[1]) / 2))
+        print(centerCoord)
         moved, direction, speed = puck.currentVector(centerCoord, FPS, debug=DEBUG)
 
         #Draw prediction line
@@ -44,6 +45,8 @@ while True:
     elif boundingInitial is None:
         if DEBUG:
             print("\ndetectPuck.py WARNING: No puck exists in frame")
+
+    cv2.line(view, (320, 180), (270, 180), (0,255,0), 1)
 
     #Visualize frame
     cv2.imshow(FRAME_NAME, view)

@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 from PIL import Image
+from src.config import CONVERTER
 
 def beginVideoCapture(webcam, debug=False):
     """Initiate video capture from cv.
@@ -115,3 +116,56 @@ def createBoundingBox(view, colorMask, boundingBoxColor=(0,0,255), boundingBoxTh
         return (x1, y1), (x2, y2)
     else:
         return None
+
+def pixelToStep(coordPair, debug=False):
+    """Convert an [x,y] pixel coordinate into the proper stepper motor coordinates for this model.
+    This function must be adjusted based on an individual's setup - as the conversion is calculated from the ratio of pixels to table size, gear ratio, belt pitch, etc.
+    
+        ### Args:
+            coordPair (list): x,y coordinate pairing in pixels, based on camera
+            debug (bool): Enter debug mode
+
+        ### Returns:
+            stepperCoords (list): x,y coordinate pairing, converted from pixels to motor steps
+    
+    """
+    bufferX = 24.094499999992635 #pixel buffer to account for width of chassis rails still in camera view on x-axis
+    bufferY = 75.51183000013071
+    pX = coordPair[1]
+    pY = coordPair[0]
+    print(f"Flipped coordinate pairing: {pX, pY}")
+
+    if pX < 180:
+        print("pX less than 180, indicating movement right (positive)")
+        pX = abs(pX-(180-bufferX)) # this line not strictly neccesary but is helping my brain with logic so it stays for a bit
+    elif pX > 180:
+        print("pX over 180, indicating movement left (negative)")
+        pX = -abs(pX-(180+bufferX))
+    elif pX == 180:
+        print("pX is at 180, indicating no x axis movement")
+        pX = 0
+    else:
+        print("pixelX is a lil silly")
+
+    pY = 640-pY
+
+    # pY = abs(((640)-pY)) #something needs to be done with y
+    # if pY > 320:
+    #     pY = abs((640-bufferY) - pY)
+
+    print(f"\nNormalized pX coordinate: {pX}")
+    print(f"\nNormalized pY coordinates: {pY}")
+
+    mmX = pX/CONVERTER
+    mmY = pY/CONVERTER
+
+    print(f"\npixelToStep: millimeter coord X: {mmX}")
+    print(f"\npixelToStep: millimeter coord Y: {mmY}")
+
+    stepCoordX = round(mmX/.33)
+    stepCoordY = round(mmY/.33)
+
+    print(f"\npixelToStep: stepper coord X (normalized): {stepCoordX}")
+    print(f"\npixelToStep: stepper coord Y (normalized): {stepCoordY}")
+
+    return [stepCoordX, stepCoordY]

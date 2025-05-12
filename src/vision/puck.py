@@ -2,8 +2,6 @@ import numpy as np
 import cv2
 from src.config import *
 
-# TODO: Make this coord system utilize the center of the bbox instead of bottom left throughout
-
 class puckObject:
     def __init__(self, coordBottom=(0,0), coordTop=(0,0)):
         """Create a new puck object with given coordinates. If none given, coords are set at 0.
@@ -117,10 +115,11 @@ class puckObject:
 
         # Calculate line length based on speed
         speed = speed/15
-        print(f"speed: {speed}")
+        if debug:
+            print(f"puck.reboundPrediction: Speed: {speed} pixels/sec")
         lineScale = min(((speed**2) / (2 * FRICTION)/10), 1000)
 
-        print(f"line length: {lineScale}")
+        # print(f"line length: {lineScale}")
 
         pos = np.array(currentCenter, dtype=float)
         remainingDistance = lineScale

@@ -68,7 +68,6 @@ class communicator:
             if debug:
                 print("receiveMessage: message found")
             message = self.serialComm.read(self.serialComm.in_waiting).decode()
-            print(message)
         else:
             message = None
 
@@ -78,5 +77,4 @@ class communicator:
         while self.serialComm.in_waiting == 0:
             time.sleep(0.01)  # wait 10ms
             message = self.receiveMessage()
-            print(message)
-            return
+            return message
