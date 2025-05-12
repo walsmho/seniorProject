@@ -13,11 +13,10 @@ def main():
     roboPaddle = paddle()
 
     roboPaddle.homingSequence(joystick, bridge, DEBUG)
-    # Only ever pass through coords 370 < x < 640 and 0 < y < 360
-    stepCoords = pixelToStep([400,65]) # should return 0, 1700 after redistribution
+    stepCoords = pixelToStep([400,65]) # Coords (370 < x < 640) and (0 < y < 360) will be the only valid inputs
 
     roboPaddle.goto(bridge, stepCoords, DEBUG)
-    bridge.findMessage()
+    bridge.waitForMessage()
     roboPaddle.update()
 
 if __name__ == "__main__":

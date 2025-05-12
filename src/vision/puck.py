@@ -3,12 +3,13 @@ import cv2
 from src.config import *
 
 class puckObject:
-    def __init__(self, coordBottom=(0,0), coordTop=(0,0)):
+    def __init__(self, coordBottom=(0,0), coordTop=(0,0), debug=False):
         """Create a new puck object with given coordinates. If none given, coords are set at 0.
         
             ### Args:
                 coordBottom (tuple): coordinate for bottom left of puck
                 coordTop (tuple): coordinate for top right of puck
+                debug (bool): Enter debug mode
 
             ### Returns:
                 None
@@ -17,6 +18,8 @@ class puckObject:
 
         self.coordBottom = coordBottom
         self.coordTop = coordTop
+        if debug:
+            print("\npuckObject.init: succesful initialziation of puck object")
 
     def update(self, newCoord1, newCoord2, debug=False):
         """Update self coords used in boundingbox to new position
@@ -86,11 +89,11 @@ class puckObject:
         else:
             moved = False
             if debug:
-                print("\ncurrentVector: no movement detected")
+                print("\npuck.currentVector: no movement detected")
 
         if moved and debug:
-            print(f"\ncurrentVector: speed of {speed} pixels/sec")
-            print(f"\ncurrentVector: direction {direction}")
+            print(f"\npuck.currentVector: speed of {speed} pixels/sec")
+            print(f"\npuck.currentVector: direction {direction}")
 
         return moved, direction, speed
 
@@ -146,8 +149,8 @@ class puckObject:
 
             # Move along the direction vector
             if debug:
-                print(f"\nreboundPrediction: DIRECTION: {direction}")
-                print(f"\nreboundPrediction: minDist: {minDist}")
+                print(f"\npuck.reboundPrediction: DIRECTION: {direction}")
+                print(f"\npuck.reboundPrediction: minDist: {minDist}")
             pos += direction * minDist
             pathPts.append(tuple(pos.astype(int)))
             remainingDistance -= minDist
@@ -170,6 +173,6 @@ class puckObject:
             cv2.line(view, pt1, pt2, lineColor, lineThickness)
 
         if debug:
-            print(f"reboundPrediction: Trajectory Points: {pathPts}")
+            print(f"puck.reboundPrediction: Trajectory Points: {pathPts}")
 
         return tuple(currentCenter), pathPts[-1]

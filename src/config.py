@@ -11,7 +11,8 @@ FPS = 30
 FRICTION = 2
 
 CONVERTER = 0.5249343832 #Ratio of pixels:millimeters on both axis'
-dSTEP = .33 #Distance per step of motor. Calculated by ((pulley teeth * mm pitch of belt)/(360/step degree of motor))
+DSTEP = .33 #Distance per step of motor. Calculated by ((pulley teeth * mm pitch of belt)/(360/step degree of motor))
+BUFFERX = 24.094499999992635 #pixel buffer to account for width of chassis rails still in camera view on x-axis
 
 # CONTROLLER VARS
 CALIBRATED = False

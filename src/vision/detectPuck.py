@@ -46,8 +46,6 @@ while True:
         if DEBUG:
             print("\ndetectPuck.py WARNING: No puck exists in frame")
 
-    cv2.line(view, (320, 180), (270, 180), (0,255,0), 1)
-
     #Visualize frame
     cv2.imshow(FRAME_NAME, view)
     if cv2.waitKey(1) & 0xFF == ord('q'):

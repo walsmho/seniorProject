@@ -61,12 +61,12 @@ class paddle:
             arduinoResponse = bridge.receiveMessage(DEBUG)
 
             if arduinoResponse is not None and DEBUG:
-                print(f"\nhomingSequence: Message from arduino: {arduinoResponse}")
+                print(f"\npaddle.homingSequence: Message from arduino: {arduinoResponse}")
 
         while HOMED:
             self.currentCoords = [0,0]
             if DEBUG:
-                manualCheck = str(input(("\nhomingSequence: Homing complete. Would you like to verify coords? y/n: ")).lower())
+                manualCheck = str(input(("\npaddle.homingSequence: Homing complete. Would you like to verify coords? y/n: ")).lower())
                 if manualCheck == "y":
                     MANUAL = True
                     while MANUAL:
@@ -137,7 +137,7 @@ class paddle:
         except ValueError:
             x=0
             y=0
-            print("\nrobotPaddle.getUserCoords: VALUE ERROR. Invalid input. Defaulting to 0,0")
+            print("\npaddle.getUserCoords: VALUE ERROR. Invalid input. Defaulting to 0,0")
         newCoords = [x, y]
         self.newCoords = newCoords
         if debug:
@@ -183,8 +183,9 @@ class paddle:
             print(coords)
             okieDokieY = False
 
-        print(okieDokieX)
-        print(okieDokieY)
+        if debug:
+            print(f"paddle.coordCheck: Coord check X: {okieDokieX}")
+            print(f"paddle.coordCheck: Coord check Y: {okieDokieY}")
 
         return okieDokieX, okieDokieY
 

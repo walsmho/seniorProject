@@ -28,7 +28,7 @@ class controller:
         self.joysticks = p.joystick.get_count()
 
         if self.joysticks == 0 and debug:
-            print("\ncontroller: no joysticks detected")
+            print("\ncontroller.init: no joysticks detected")
         else:
             try:
                 self.myController = p.joystick.Joystick(0)
@@ -37,7 +37,7 @@ class controller:
                 quit()
             self.myController.init()
             if debug:
-                print("\ncontroller: controller found and initialized")
+                print("\ncontroller.init: controller found and initialized")
     
     def findGantryInput(self, debug=False):
         """Using the hat control on the remote, check for movement in manual mode. Also check to see if program terminated
