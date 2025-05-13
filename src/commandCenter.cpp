@@ -2,7 +2,7 @@
 #include "motorControl/motorMove.h"
 
 bool DEBUG = true;
-int testSpeed = 700;
+int homeSpeed = 1000; //switch back to 1000 after testing
 
 void setup() {
   Serial.begin(115200);  // Use a consistent and fast baud rate
@@ -16,24 +16,23 @@ void setup() {
 void loop() {
   if (Serial.available()) {
     String input = Serial.readStringUntil('\n');
-
-    Serial.print(input);
     
     if (input.startsWith("GOTO")) {
       parseAndMove(input);
+      Serial.print(input);
     }
 
     else if (input.length() == 1) {
       char command = input.charAt(0);
 
       if (command == 'U') {
-        yForward(1, testSpeed);
+        yForward(1, homeSpeed);
       } else if (command == 'D') {
-        yBackward(1, testSpeed);
+        yBackward(1, homeSpeed);
       } else if (command == 'L') {
-        xLeft(1, testSpeed);
+        xLeft(1, homeSpeed);
       } else if (command == 'R') {
-        xRight(1, testSpeed);
+        xRight(1, homeSpeed);
       } else if (command == 'Q') {
         Serial.println("Quit program");
       } else {

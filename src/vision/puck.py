@@ -1,6 +1,7 @@
 import numpy as np
 import cv2
 from src.config import *
+import time
 
 class puckObject:
     def __init__(self, coordBottom=(0,0), coordTop=(0,0), debug=False):
@@ -152,6 +153,7 @@ class puckObject:
                 print(f"\npuck.reboundPrediction: DIRECTION: {direction}")
                 print(f"\npuck.reboundPrediction: minDist: {minDist}")
             pos += direction * minDist
+
             pathPts.append(tuple(pos.astype(int)))
             remainingDistance -= minDist
 
@@ -165,6 +167,10 @@ class puckObject:
         for i in range(len(pathPts)-1):
             pt1 = tuple(map(int, pathPts[i]))
             pt2 = tuple(map(int, pathPts[i+1]))
+            print(pos)
+            if ((ROBOGOAL[0][0] < pt1[0] < ROBOGOAL[1][0]) and (ROBOGOAL[0][1] < pt1[1] < ROBOGOAL[1][1])) or ((ROBOGOAL[0][0] < pt2[0] < ROBOGOAL[1][0]) and (ROBOGOAL[0][1] < pt2[1] < ROBOGOAL[1][1])):
+                print("ALERT: PUCK HEADED TOWARDS GOAL")
+                return tuple(currentCenter), pathPts[-1]
             if debug:
                 print(type(pt1))
                 print(pt1)

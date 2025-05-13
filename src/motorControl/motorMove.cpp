@@ -11,6 +11,8 @@ const int DirX = 5;
 const int StepY = 3;
 const int DirY = 6;
 
+int motorSpeed = 400;
+
 void yForward(int steps, int delay) {
     digitalWrite(DirX, LOW);
     digitalWrite(DirY, HIGH);

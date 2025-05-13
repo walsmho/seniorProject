@@ -37,14 +37,15 @@ while True:
             if DEBUG:
                 print("\nPuck heading to {} at {} pixels / second".format(lineEnd, speed))
 
-        #msg = response(moved, direction, speed)
-
         puck.update(newCoordBottom, newCoordTop, DEBUG)
 
     #When not seeing puck:
     elif boundingInitial is None:
         if DEBUG:
             print("\ndetectPuck.py WARNING: No puck exists in frame")
+
+    # Draw goals
+    cv2.rectangle(view, ROBOGOAL[0], ROBOGOAL[1], BOUNDARY_COLOR, 3)
 
     #Visualize frame
     cv2.imshow(FRAME_NAME, view)
