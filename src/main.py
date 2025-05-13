@@ -20,10 +20,10 @@ def main():
         camera.processFrame()
         camera.visualizeFrame()
 
-        #stepCoords = pixelToStep([400,65]) # Coords (370 < x < 640) and (0 < y < 360) will be the only valid inputs
-        roboPaddle.goto(bridge, [0, 0], DEBUG)
-        bridge.waitForMessage()
-        roboPaddle.update()
+        # #stepCoords = pixelToStep([400,65]) # Coords (370 < x < 640) and (0 < y < 360) will be the only valid inputs
+        # roboPaddle.goto(bridge, [0, 0], DEBUG)
+        # bridge.waitForMessage()
+        # roboPaddle.update()
 
         running = camera.checkStatus()
 
