@@ -47,7 +47,7 @@ void yBackward(int steps, int delay) {
     }
 }
 
-void xRight(int steps, int delay) {
+void xLeft(int steps, int delay) {
     digitalWrite(DirX, LOW);
     digitalWrite(DirY, LOW);
 
@@ -64,7 +64,7 @@ void xRight(int steps, int delay) {
     }
 }
 
-void xLeft(int steps, int delay) {
+void xRight(int steps, int delay) {
     digitalWrite(DirX, HIGH);
     digitalWrite(DirY, HIGH);
 
@@ -98,15 +98,15 @@ void bresenhamMove(long deltaX, long deltaY, int sx, int sy) {
         if (e2 > dy && labs(currentX) < dx) {
             err += dy;
             currentX += sx;
-            if (sx > 0) xRight(1, 500);
-            else xLeft(1, 500);
+            if (sx > 0) xRight(1, motorSpeed);
+            else xLeft(1, motorSpeed);
         }
 
         if (e2 < dx && labs(currentY) < -dy) {
             err += dx;
             currentY += sy;
-            if (sy > 0) yForward(1, 500);
-            else yBackward(1, 500);
+            if (sy > 0) yForward(1, motorSpeed);
+            else yBackward(1, motorSpeed);
         }
     }
 }

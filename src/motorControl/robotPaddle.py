@@ -177,7 +177,7 @@ class paddle:
         elif coords[1] < 0:
             okieDokieY = "DBound"
             print("D")
-        elif coords[1] < 1700 and self.currentCoords[1] >= 0:
+        elif coords[1] <= 1700 and self.currentCoords[1] >= 0:
             okieDokieY = "inBounds"
         else:
             print(coords)
@@ -299,16 +299,16 @@ class paddle:
         """
 
         xOld, yOld = self.currentCoords
-        if newCoords != None:
+        if newCoords is not None:
             self.newCoords = newCoords[0], newCoords[1]
         xNew, yNew = self.newCoords
 
         xCheck, yCheck = self.coordCheck(self.newCoords)
 
         if xCheck != "inBounds" or yCheck != "inBounds":
-            if debug:
-                print(f"\ngiveArduinoCoords: invalid coordinate entry. {self.newCoords} out of bounds")
-                self.newCoords = self.currentCoords
+            #This is not a debug only message because otherwise it just won't move and it leaves lil Ryan scratching his head like a madman
+            print(f"\ngiveArduinoCoords: invalid coordinate entry. {self.newCoords} out of bounds")
+            self.newCoords = self.currentCoords
             return
 
         deltaX = abs(xNew - xOld)
@@ -330,6 +330,67 @@ class paddle:
         communicator.waitForMessage()
         print("\ninfoPackage succesfully sent")
         return
+    
+    def statusCheck(self, puckPackage, debug=False):
+        #DOUBLE CHECK TYPES OF PUCKPACKAGE CONTENTS FOR DOCSTRING
+        """Meat and potatoes of the robotPaddle algorithm. Given data of puck, determine neccesary status
+        
+            ### Args:
+                puckPackage (list): package containing:
+                    moved (bool): If puck has moved significantly
+                    direction (list): vector dir
+                    speed (float): pixels/second speed calculation
+                    lineStart (float): coord point of beginning of puck trajectory
+                    lineEnd (float): coord point of end of puck trajectory, based on speed
+                    danger (bool): If puck trajectory will go to robot goal
+
+            ### Returns:
+                status (int): Numerical status signifying action to take:
+                    status=0: Passive response, do nothing
+                    status=1: Emergency response, puck headed to goal -> return home to block
+                    status=2: Defensive response, block at closest intercept
+                    status=3: Return response, hit back to player side
+                    status=4: Attack response, hit towards player goal
+
+                response (list): [x,y] PIXEL coordinates to return to, NONE if status=0
+        
+        """
+        # Current thought for step up from status 1 - match puck's Y coordinate (camera view) and then retreat to goal when danger
+        # Is this the most effective way to unpack a list into separate vars?
+        moved = puckPackage[0]
+        if not moved:
+            status = 0
+            return status, None
+        direction = puckPackage[1]
+        speed = puckPackage[2]
+        lineStart = puckPackage[3]
+        lineEnd = puckPackage[4]
+        danger = puckPackage[5]
+
+        if danger: #Later change to "if danger and speed > responseThreshold"
+            print("PUCK GOING TOWARDS GOAL")
+            status = 1
+            response = [0, 180]
+
+            return status, response
+        
+        else:
+            return 0, None
+        
+        """
+        
+        Current thoughts / psuedocode for each status:
+        1) If danger and speed > response threshold: Move to (0,0)
+        Could also experiment with matching the PIXEL y-axis to the same as the puck, so it won't miss when it comes in from the corner (paddle[1] = lineEnd[1])
+        Note: The pixel y-axis is really the robot x-axis
+
+        2) If (danger and speed < response threshold) or (lineEnd is within bounds of robot side and speed < response threshold):
+        If lineEnd[1] > robotCoord[1]: #if puck Y is in front of robot Y
+            Find time it will take for puck to reach end point of line given pixels / sec
+            Find time it will take gantry to reach any given point on line given max speed and current location
+
+        
+        """
 
     def update(self):
         """Make self.currentCoords update to the newCoords"""

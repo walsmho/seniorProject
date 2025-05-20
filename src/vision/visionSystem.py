@@ -3,6 +3,7 @@ import cv2
 from src.vision.visionUtil import getLimits, createMask, createBoundingBox, beginVideoCapture
 from src.vision.puck import puckObject
 from src.config import *
+import numpy as np
 
 class overheadVision:
     def __init__(self, camIndex = WEBCAM, debug=False):
@@ -33,15 +34,24 @@ class overheadVision:
             #print(centerCoord)
             moved, direction, speed = self.puck.currentVector(centerCoord, FPS, debug)
             if moved:
-                lineStart, lineEnd = self.puck.reboundPrediction(self.view, self.captureHeight, self.captureWidth, centerCoord, direction, speed, debug)
+                lineStart, lineEnd, danger = self.puck.reboundPrediction(self.view, self.captureHeight, self.captureWidth, centerCoord, direction, speed, (0, 255, 0), 3, debug)
                 if DEBUG:
-                    print(f"\nvisionSystem.processFrame: Puck heading to {lineEnd} at {speed} pixels / second")
+                    print(f"\noverheadVision.processFrame: Puck heading to {lineEnd} at {speed} pixels / second")
+
+            else:
+                if DEBUG:
+                    print(f"\noverheadVision.processFrame: no significant movement detected")
+                return [False]
 
             self.puck.update(newCoordBottom, newCoordTop, debug)
+            return [moved, direction, speed, lineStart, lineEnd, danger]
 
         elif boundingInitial is None:
             if debug:
                 print("\nvisionSystem.processFrame: WARNING: No puck exists in frame")
+                return [False]
+            
+        return [False]
 
     def visualizeFrame(self, debug=False):
         #Draw Goals

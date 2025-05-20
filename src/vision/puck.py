@@ -129,6 +129,7 @@ class puckObject:
         remainingDistance = lineScale
         pathPts = [tuple(pos.astype(int))]
 
+        danger = False
         # Calculate bounces
         while remainingDistance > 0:
             if direction[0] > 0:
@@ -153,32 +154,33 @@ class puckObject:
                 print(f"\npuck.reboundPrediction: DIRECTION: {direction}")
                 print(f"\npuck.reboundPrediction: minDist: {minDist}")
             pos += direction * minDist
-
             pathPts.append(tuple(pos.astype(int)))
-            remainingDistance -= minDist
 
-            # Reflect direction if a wall was hit
-            if minDist == distRight:
-                direction[0] *= -1  # Reflect X
-            if minDist == distBottom:
-                direction[1] *= -1  # Reflect Y
+            #Check to see if puck incoming towards goal (i.e. no more rebounds)
+            if ((ROBOGOAL[0][0] <= pos[0] <= ROBOGOAL[1][0]) and (ROBOGOAL[0][1] <= pos[1] <= ROBOGOAL[1][1])): #or ((ROBOGOAL[0][0] < pt2[0] < ROBOGOAL[1][0]) and (ROBOGOAL[0][1] < pt2[1] < ROBOGOAL[1][1]))):
+                danger = True
+                for i in range(len(pathPts)-1):
+                    pt1 = tuple(map(int, pathPts[i]))
+                    pt2 = tuple(map(int, pathPts[i+1]))
+                    cv2.line(view, pt1, pt2, lineColor, lineThickness)
+                    print("TRJAECTORY TO GOAL DETECTED")
+                return tuple(currentCenter), pathPts[-1], danger
+            
+            else:
+                remainingDistance -= minDist
+                # Reflect direction if a wall was hit
+                if minDist == distRight:
+                    direction[0] *= -1  # Reflect X
+                if minDist == distBottom:
+                    direction[1] *= -1  # Reflect Y
 
         # Draw Path
         for i in range(len(pathPts)-1):
             pt1 = tuple(map(int, pathPts[i]))
             pt2 = tuple(map(int, pathPts[i+1]))
-            print(pos)
-            if ((ROBOGOAL[0][0] < pt1[0] < ROBOGOAL[1][0]) and (ROBOGOAL[0][1] < pt1[1] < ROBOGOAL[1][1])) or ((ROBOGOAL[0][0] < pt2[0] < ROBOGOAL[1][0]) and (ROBOGOAL[0][1] < pt2[1] < ROBOGOAL[1][1])):
-                print("ALERT: PUCK HEADED TOWARDS GOAL")
-                return tuple(currentCenter), pathPts[-1]
-            if debug:
-                print(type(pt1))
-                print(pt1)
-                print(type(pt2))
-                print(pt2)
             cv2.line(view, pt1, pt2, lineColor, lineThickness)
 
         if debug:
             print(f"puck.reboundPrediction: Trajectory Points: {pathPts}")
 
-        return tuple(currentCenter), pathPts[-1]
+        return tuple(currentCenter), pathPts[-1], danger

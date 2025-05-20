@@ -129,24 +129,23 @@ def pixelToStep(coordPair, debug=False):
             stepperCoords (list): x,y coordinate pairing, converted from pixels to motor steps
     
     """
-
     #Consider adding bufferY to account for camera clipping of robot and user goals
+
     pX = coordPair[1]
     pY = coordPair[0]
+
     if debug:
         print(f"\npixelToStep: Flipped coordinate pairing. Now: {pX, pY}")
 
     if pX < 180:
-        pX = abs(pX-(180-BUFFERX)) # Pixel above midpoint of table -> right movement -> positive dir
+        pX = -abs(pX-(180-BUFFERX)) # Pixel below midpoint of table -> right movement -> positive dir
     elif pX > 180:
-        pX = -abs(pX-(180+BUFFERX)) # Pixel below midpoint of table -> left movement -> negative dir
+        pX = abs(pX-(180+BUFFERX)) # Pixel above midpoint of table -> left movement -> negative dir
     elif pX == 180:
         pX = 0 # Pixel at midpt -> No movement -> 0
     else:
         print("\npixelToStep: WARNING: pX not within expected value bounds. It will be reset to 0. \ncurrent pX value: {pX}")
         pX = 0 # Edge case. Don't move
-
-    pY = abs(640-pY) # pY is less accurate than I'd like
 
     # pY = abs(((640)-pY)) #something needs to be done with y
     # if pY > 320:

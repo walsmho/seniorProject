@@ -11,7 +11,7 @@ FPS = 30
 FRICTION = .5
 
 ROBOGOAL = [(0, 140), (40, 220)]
-#PLAYERGOAL = [(600, 140), (640, 220)]
+PLAYERGOAL = [(600, 140), (640, 220)]
 
 CONVERTER = 0.5249343832 #Ratio of pixels:millimeters on both axis'
 DSTEP = .33 #Distance per step of motor. Calculated by ((pulley teeth * mm pitch of belt)/(360/step degree of motor))

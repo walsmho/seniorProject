@@ -19,7 +19,7 @@ void loop() {
     
     if (input.startsWith("GOTO")) {
       parseAndMove(input);
-      Serial.print(input);
+      //Serial.print(input);
     }
 
     else if (input.length() == 1) {
