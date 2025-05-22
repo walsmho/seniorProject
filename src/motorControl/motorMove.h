@@ -7,6 +7,7 @@ void xRight(int steps, int delay);
 void xLeft(int steps, int delay);
 
 void bresenhamMove(long deltaX, long deltaY, int sx, int sy);
+void rampMove(long deltaX, long deltaY, int sx, int sy);
 void parseAndMove(String command);
 
 #endif

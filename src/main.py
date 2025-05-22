@@ -12,22 +12,30 @@ def main():
     camera = overheadVision()
 
     roboPaddle.homingSequence(joystick, bridge, DEBUG)
-    roboPaddle.goto(bridge, [500,500])
-    print("GOTO complete")
-    roboPaddle.update()
-    
-    running = True
-    while running:
-        puckChanges = camera.processFrame()
-        camera.visualizeFrame()
-        status, response = roboPaddle.statusCheck(puckChanges)
-        #If status = 0, no change
-        if status == 1:
-            stepCoords = pixelToStep(response)
-            roboPaddle.goto(bridge, stepCoords)
 
+    #Delete this after done with ramp tests
+    for _ in range(5):
+        roboPaddle.getUserCoords()
+        roboPaddle.goto(bridge)
         roboPaddle.update()
-        running = camera.checkStatus()
+
+
+    # roboPaddle.goto(bridge, [500,500])
+    # print("GOTO complete")
+    # roboPaddle.update()
+    
+    # running = True
+    # while running:
+    #     puckChanges = camera.processFrame()
+    #     camera.visualizeFrame()
+    #     status, response = roboPaddle.statusCheck(puckChanges)
+    #     #If status = 0, no change
+    #     if status == 1:
+    #         stepCoords = pixelToStep(response)
+    #         roboPaddle.goto(bridge, stepCoords)
+
+    #     roboPaddle.update()
+    #     running = camera.checkStatus()
 
 if __name__ == "__main__":
     main()

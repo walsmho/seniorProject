@@ -155,29 +155,29 @@ class paddle:
         
         """
 
-        #Current x bounds: 900 and -900
-        #Current y bounds: 1700
+        #Current x bounds: 1400 and -1400
+        #Current y bounds: 2800
         #Tape or make a jig on table for consistent calibration
 
-        if coords[0] > 900:
+        if coords[0] > 1400:
             okieDokieX = "RBound"
             print("R")
-        elif coords[0] < -900:
+        elif coords[0] < -1400:
             okieDokieX = "LBound"
             print("L")
-        elif coords[0] <= 900 and self.currentCoords[0] >= -900:
+        elif coords[0] <= 1400 and self.currentCoords[0] >= -1400:
             okieDokieX = "inBounds"
         else:
             print(coords)
             okieDokieX = False
 
-        if coords[1] >= 1700:
+        if coords[1] >= 2800:
             okieDokieY = "UBound"
             print("U")
         elif coords[1] < 0:
             okieDokieY = "DBound"
             print("D")
-        elif coords[1] <= 1700 and self.currentCoords[1] >= 0:
+        elif coords[1] <= 2800 and self.currentCoords[1] >= 0:
             okieDokieY = "inBounds"
         else:
             print(coords)
@@ -299,11 +299,14 @@ class paddle:
         """
 
         xOld, yOld = self.currentCoords
+        print(f"CURRENT COORDS {self.currentCoords}")
         if newCoords is not None:
             self.newCoords = newCoords[0], newCoords[1]
         xNew, yNew = self.newCoords
+        print(f"NEW COORDS {self.newCoords}")
 
         xCheck, yCheck = self.coordCheck(self.newCoords)
+        print(f"STATUS CHECK {xCheck}, {yCheck}")
 
         if xCheck != "inBounds" or yCheck != "inBounds":
             #This is not a debug only message because otherwise it just won't move and it leaves lil Ryan scratching his head like a madman
@@ -313,6 +316,7 @@ class paddle:
 
         deltaX = abs(xNew - xOld)
         deltaY = abs(yNew - yOld)
+        print(f"DELTAS: x {deltaX}, y {deltaY}")
         if xOld < xNew:
             sx = 1
         else:
