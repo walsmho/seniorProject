@@ -130,7 +130,6 @@ def pixelToStep(coordPair, debug=False):
     
     """
     #Consider adding bufferY to account for camera clipping of robot and user goals
-
     pX = coordPair[1]
     pY = coordPair[0]
 

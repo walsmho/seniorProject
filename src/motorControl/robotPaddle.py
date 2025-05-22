@@ -31,7 +31,7 @@ class paddle:
         if debug:
             print("\npaddle.init: succesful initialization of paddle object")
 
-    def homingSequence(self, controller, communicator, debug):
+    def homingSequence(self, controller, communicator, debug=False):
         """Homing function to re-calibrate robot coords using remote control. May be good to look into how to make gantry move slower, its not precise rn
         
             ### Args:
@@ -301,7 +301,15 @@ class paddle:
         xOld, yOld = self.currentCoords
         print(f"CURRENT COORDS {self.currentCoords}")
         if newCoords is not None:
-            self.newCoords = newCoords[0], newCoords[1]
+            # Check to see if coords passed wants to say same as previous, else, update simply with new
+            if newCoords[0] == "self":
+                self.newCoords[0] = self.currentCoords[0]
+                self.newCoords[1] = newCoords[1]
+            if newCoords[1] == "self":
+                self.newCoords[1] = self.currentCoords[1]
+                self.newCoords[0] = newCoords[0]
+            else:
+                self.newCoords = newCoords[0], newCoords[1]
         xNew, yNew = self.newCoords
         print(f"NEW COORDS {self.newCoords}")
 
@@ -352,7 +360,7 @@ class paddle:
                 status (int): Numerical status signifying action to take:
                     status=0: Passive response, do nothing
                     status=1: Emergency response, puck headed to goal -> return home to block
-                    status=2: Defensive response, block at closest intercept
+                    status=2: Defensive response, passively match puck y-axis positoin and block at closest intercept
                     status=3: Return response, hit back to player side
                     status=4: Attack response, hit towards player goal
 
@@ -371,13 +379,20 @@ class paddle:
         lineEnd = puckPackage[4]
         danger = puckPackage[5]
 
+        print(puckPackage)
+
         if danger: #Later change to "if danger and speed > responseThreshold"
             print("PUCK GOING TOWARDS GOAL")
             status = 1
             response = [0, 180]
 
             return status, response
-        
+        elif speed < 1000:
+            print("PUCK AT TRACKABLE SPEED")
+            status = 2
+            response = [100, lineStart[1]]
+            return status, response
+
         else:
             return 0, None
         

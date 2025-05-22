@@ -44,7 +44,7 @@ class overheadVision:
                 return [False]
 
             self.puck.update(newCoordBottom, newCoordTop, debug)
-            return [moved, direction, speed, lineStart, lineEnd, danger]
+            return [moved, direction, speed, centerCoord, lineEnd, danger]
 
         elif boundingInitial is None:
             if debug:

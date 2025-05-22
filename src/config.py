@@ -21,4 +21,4 @@ BUFFERX = 24.094499999992635 #pixel buffer to account for width of chassis rails
 CALIBRATED = False
 MOVEMENT_INPUT = 0
 
-DEBUG = True
+DEBUG = False
