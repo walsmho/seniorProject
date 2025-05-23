@@ -41,7 +41,7 @@ class overheadVision:
             else:
                 if DEBUG:
                     print(f"\noverheadVision.processFrame: no significant movement detected")
-                return [False]
+                return [moved, centerCoord]
 
             self.puck.update(newCoordBottom, newCoordTop, debug)
             return [moved, direction, speed, centerCoord, lineEnd, danger]

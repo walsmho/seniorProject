@@ -2,7 +2,7 @@ from src.config import *
 from src.motorControl.controller import controller
 from src.motorControl.robotPaddle import paddle
 from src.comms.bridge import communicator
-from src.vision.visionUtil import pixelToStep
+from src.vision.visionUtil import pixelToStep, stepToPixel
 from src.vision.visionSystem import overheadVision
 
 def main():
@@ -13,30 +13,30 @@ def main():
 
     roboPaddle.homingSequence(joystick, bridge)
 
-    # #Delete this after done with ramp tests
     # for _ in range(5):
-    #     roboPaddle.getUserCoords()
-    #     roboPaddle.goto(bridge)
-    #     roboPaddle.update()
-
-    roboPaddle.goto(bridge, [500,500])
-    print("GOTO complete")
-    roboPaddle.update()
+    #     x = int(input("coord x: "))
+    #     y = int(input("coord y: "))
+        
+    #     s = pixelToStep([x,y])
+    #     p = stepToPixel([x,y])
+    #     print(f"PIXEL COORDS: {p}")
+    #     print(f"STEP COORDS: {s}")
     
     running = True
     while running:
         puckChanges = camera.processFrame()
         camera.visualizeFrame()
         status, response = roboPaddle.statusCheck(puckChanges)
-        #If status = 0, no change
-        if status == 1:
+        print(status)
+        if status == 0: #0 = home
+            roboPaddle.goto(bridge, [0, 180])
+            
+        elif status == 1: #1 = puck on robo side, hit
             stepCoords = pixelToStep(response)
             roboPaddle.goto(bridge, stepCoords)
-    
-        elif status == 2:
-            stepCoords = pixelToStep(response)
-            roboPaddle.goto(bridge, stepCoords)
-            roboPaddle.update()
+
+        elif status == 9: #9 = do nothing
+            pass
 
         roboPaddle.update()
         running = camera.checkStatus()

@@ -1,16 +1,6 @@
-"""
-Purpose of file:
-- Test: Have a function that allows user input of coordinates and then x and y travel to them
-- Step 2: Upgrade function so that it travels directly. 
-    - Update motorMove.cpp for joint stepper function
-    - Allow bridge.py to send coord commands
-    - Submit coords, check to make sure they're within bounds, travel directly
-
-    Eventually, a separate function will do this instead of the user, after calculating the optimal intercept point
-
-"""
-
 from src.config import *
+from src.vision.visionUtil import stepToPixel
+import time
 
 class paddle:
     def __init__(self, coords=[0,0], newCoords=[0,0], debug=False):
@@ -25,7 +15,8 @@ class paddle:
                 None
         
         """
-
+        self.cooldownDur = 0  # Cooldown in seconds
+        self.lastAction = 0 
         self.currentCoords = coords
         self.newCoords = newCoords
         if debug:
@@ -352,8 +343,8 @@ class paddle:
                     moved (bool): If puck has moved significantly
                     direction (list): vector dir
                     speed (float): pixels/second speed calculation
-                    lineStart (float): coord point of beginning of puck trajectory
-                    lineEnd (float): coord point of end of puck trajectory, based on speed
+                    lineStart (list): coord point of beginning of puck trajectory
+                    lineEnd (list): coord point of end of puck trajectory, based on speed
                     danger (bool): If puck trajectory will go to robot goal
 
             ### Returns:
@@ -367,31 +358,93 @@ class paddle:
                 response (list): [x,y] PIXEL coordinates to return to, NONE if status=0
         
         """
-        # Current thought for step up from status 1 - match puck's Y coordinate (camera view) and then retreat to goal when danger
         # Is this the most effective way to unpack a list into separate vars?
+        currentTime = time.time()
+        # Check cooldown
+        if currentTime - self.lastAction < self.cooldownDur:
+            if debug:
+                print("Cooldown active - skipping response")
+            return 0, None  # Passive status during cooldown
+
+        #unpack
         moved = puckPackage[0]
-        if not moved:
-            status = 0
+
+        #Status for handling no movement in puck
+        if not moved and (len(puckPackage) == 1): #If no movement and no puck data (off of board):
+            print("NO MOVEMENT. PUCK NOT DETECTED")
+            status = 9
             return status, None
-        direction = puckPackage[1]
-        speed = puckPackage[2]
-        lineStart = puckPackage[3]
-        lineEnd = puckPackage[4]
-        danger = puckPackage[5]
+        
+        elif not moved and (len(puckPackage) == 2): #If no movement and puck exists
+            moved = puckPackage[0]
+            lineStart = puckPackage[1]
 
-        print(puckPackage)
+            print(lineStart)
+            print(self.currentCoords)
+            print(stepToPixel(self.currentCoords))
 
-        if danger: #Later change to "if danger and speed > responseThreshold"
-            print("PUCK GOING TOWARDS GOAL")
-            status = 1
-            response = [0, 180]
+            if not moved and lineStart[0] > 300:
+                print("PUCK IS IMMOBILE AT USER SIDE")
+                status = 0
+                return status, None
+            
+            elif not moved and lineStart[0] < 300:
+                impact = 5
+                if (stepToPixel(self.currentCoords)[1]) < lineStart[0]:
+                    #print("PUCK IS IMMOBILE ON ROBOT SIDE AND IN FRONT OF GANTRY. HITTING")
+                    status = 1
+                    lineStart = list(lineStart)
+                    # Give the paddle a little more oomf as it hits the puck (overshoot by 5 pixels)
+                    if lineStart[0] < 0:
+                        lineStart[0] = -abs(lineStart[0]+impact)
+                    else:
+                        lineStart[0] += impact
+                    if lineStart[1] < 0:
+                        lineStart[1] = -abs(lineStart[1]+impact)
+                    else:
+                        lineStart[1] +=5
+                
+                    response = [lineStart[0]+5, lineStart[1]+5]
+                    return status, response
+                
+                else:
+                    #print("PUCK IS IMMOBILE ON ROBOT SIDE BUT NOT HITTABLE. MOVING BEHIND IT")
+                    status = 2
+                    response = [lineStart[0]-50, lineStart[1]]
+                    return status, response
+            else:
+                print("EDGE CASE UNKNOWN")
+                status = 9
+                response = None
+                return status, response
 
-            return status, response
-        elif speed < 1000:
-            print("PUCK AT TRACKABLE SPEED")
-            status = 2
-            response = [100, lineStart[1]]
-            return status, response
+        ### BELOW WORKS KIND OF
+        # # If movement, things get more complex
+        # else:
+        #     direction = puckPackage[1]
+        #     speed = puckPackage[2]
+        #     lineStart = puckPackage[3]
+        #     lineEnd = puckPackage[4]
+        #     danger = puckPackage[5]
+
+        #     print(puckPackage)
+
+        #     if danger: #Later change to "if danger and speed > responseThreshold"
+        #         status = "PUCK GOING TOWARDS GOAL"
+        #         response = [0, 180]
+
+        #         self.lastAction = currentTime
+        #         return status, response
+            
+            # elif speed < 500:
+            #     print("PUCK AT TRACKABLE SPEED")
+            #     status = 2
+            #     # Match the camera's y-axis so that the paddle is generally in the way, preventing the puck from going into the goal
+            #     yResponse = max(ROBOGOAL[0][1], min(lineEnd[1], ROBOGOAL[1][1]))
+            #     response = [60, yResponse]
+
+            #     self.lastAction = currentTime
+            #     return status, response
 
         else:
             return 0, None

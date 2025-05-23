@@ -146,10 +146,6 @@ def pixelToStep(coordPair, debug=False):
         print("\npixelToStep: WARNING: pX not within expected value bounds. It will be reset to 0. \ncurrent pX value: {pX}")
         pX = 0 # Edge case. Don't move
 
-    # pY = abs(((640)-pY)) #something needs to be done with y
-    # if pY > 320:
-    #     pY = abs((640-bufferY) - pY)
-
     mmX = pX/CONVERTER
     mmY = pY/CONVERTER
     stepCoordX = round(mmX/DSTEP)
@@ -161,3 +157,42 @@ def pixelToStep(coordPair, debug=False):
         print(f"\npixelToStep: stepper coord X (normalized): [{stepCoordX}, {stepCoordY}]")
 
     return [stepCoordX, stepCoordY]
+
+def stepToPixel(stepPair, debug=False):
+    """Convert an [x,y] stepper coordinate into the corresponding camera pixel coordinates.
+    
+        ### Args:
+            stepPair (list): x,y coordinate pairing in motor steps
+            debug (bool): Enter debug mode
+
+        ### Returns:
+            pixelCoords (list): x,y coordinate pairing in camera pixel space
+    """
+    stepX = stepPair[0]
+    stepY = stepPair[1]
+
+    # Convert steps to mm
+    mmX = stepX * DSTEP
+    mmY = stepY * DSTEP
+
+    # Convert mm to pixels
+    pX = mmX * CONVERTER
+    pY = mmY * CONVERTER
+
+    # Unflip X based on BUFFERX and 180 midpoint logic
+    if stepX > 0:
+        pixelX = 180 - BUFFERX + abs(pX)
+    elif stepX < 0:
+        pixelX = 180 + BUFFERX - abs(pX)
+    else:
+        pixelX = 180
+
+    pixelY = pY  # No flipping needed for Y
+
+    if debug:
+        print(f"\nstepToPixel: stepper coordinates: {stepPair}")
+        print(f"\nstepToPixel: converted to mm: [{mmX}, {mmY}]")
+        print(f"\nstepToPixel: converted to pixels before X adjust: [{pX}, {pY}]")
+        print(f"\nstepToPixel: final pixel coordinate: [{pixelX}, {pixelY}]")
+
+    return [round(pixelX), round(pixelY)]  # Return in [Y, X] to match camera convention
