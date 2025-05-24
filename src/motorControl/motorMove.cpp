@@ -120,10 +120,8 @@ void rampMove(long deltaX, long deltaY, int sx, int sy) {
     long currentY = 0;
     long err = dx - dy;
 
-    // int minDelay = 160;   // fastest speed
-    // int maxDelay = 500;   // slowest (starting) speed
-    int minDelay = 300;
-    int maxDelay = 500;
+    int minDelay = 160;   // fastest speed
+    int maxDelay = 500;   // slowest (starting) speed
     int rampSteps = totalSteps / 4;
 
     for (long i = 0; labs(currentX) < dx || labs(currentY) < dy; ++i) {
@@ -170,5 +168,5 @@ void parseAndMove(String command) {
     int stepDirB = strtol(command.substring(indexSy + 2, indexErr).c_str(), NULL, 10);
 
     // Perform movement using Bresenham's algorithm or similar
-    bresenhamMove(abs(deltaX), abs(deltaY), stepDirA, stepDirB);
+    rampMove(abs(deltaX), abs(deltaY), stepDirA, stepDirB);
 }

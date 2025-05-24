@@ -159,8 +159,17 @@ def pixelToStep(coordPair, debug=False):
     return [stepCoordX, stepCoordY]
 
 def stepToPixel(stepPair, debug=False):
-    stepX = stepPair[0]  # Gantry X
-    stepY = stepPair[1]  # Gantry Y
+    """Convert an [x,y] stepper coordinate into the corresponding camera pixel coordinates.
+    
+        ### Args:
+            stepPair (list): x,y coordinate pairing in motor steps
+            debug (bool): Enter debug mode
+
+        ### Returns:
+            pixelCoords (list): x,y coordinate pairing in camera pixel space
+    """
+    stepX = stepPair[0]
+    stepY = stepPair[1]
 
     # Convert steps to mm
     mmX = stepX * DSTEP
@@ -170,61 +179,20 @@ def stepToPixel(stepPair, debug=False):
     pX = mmX * CONVERTER
     pY = mmY * CONVERTER
 
-    # Reverse the original flipping logic
-    if stepX < 0:
-        pixelX = 180 - abs(pX)
-    elif stepX > 0:
-        pixelX = 180 + abs(pX)
+    # Unflip X based on BUFFERX and 180 midpoint logic
+    if stepX > 0:
+        pixelX = 180 - BUFFERX + abs(pX)
+    elif stepX < 0:
+        pixelX = 180 + BUFFERX - abs(pX)
     else:
         pixelX = 180
 
-    pixelY = round(pY)  # Y doesn't need flipping
-    pixelCoords = [pixelY, pixelX]
+    pixelY = pY  # No flipping needed for Y
 
     if debug:
         print(f"\nstepToPixel: stepper coordinates: {stepPair}")
-        print(f"Converted to mm: [{mmX}, {mmY}]")
-        print(f"Converted to pixels before flipping: [{pX}, {pY}]")
-        print(f"Final pixel coordinate: {pixelCoords}")
+        print(f"\nstepToPixel: converted to mm: [{mmX}, {mmY}]")
+        print(f"\nstepToPixel: converted to pixels before X adjust: [{pX}, {pY}]")
+        print(f"\nstepToPixel: final pixel coordinate: [{pixelX}, {pixelY}]")
 
-    return pixelCoords
-
-
-# def stepToPixel(stepPair, debug=False):
-#     """Convert an [x,y] stepper coordinate into the corresponding camera pixel coordinates.
-    
-#         ### Args:
-#             stepPair (list): x,y coordinate pairing in motor steps
-#             debug (bool): Enter debug mode
-
-#         ### Returns:
-#             pixelCoords (list): x,y coordinate pairing in camera pixel space
-#     """
-#     stepX = stepPair[0]
-#     stepY = stepPair[1]
-
-#     # Convert steps to mm
-#     mmX = stepX * DSTEP
-#     mmY = stepY * DSTEP
-
-#     # Convert mm to pixels
-#     pX = mmX * CONVERTER
-#     pY = mmY * CONVERTER
-
-#     # Unflip X based on BUFFERX and 180 midpoint logic
-#     if stepX > 0:
-#         pixelX = 180 - BUFFERX + abs(pX)
-#     elif stepX < 0:
-#         pixelX = 180 + BUFFERX - abs(pX)
-#     else:
-#         pixelX = 180
-
-#     pixelY = pY  # No flipping needed for Y
-
-#     if debug:
-#         print(f"\nstepToPixel: stepper coordinates: {stepPair}")
-#         print(f"\nstepToPixel: converted to mm: [{mmX}, {mmY}]")
-#         print(f"\nstepToPixel: converted to pixels before X adjust: [{pX}, {pY}]")
-#         print(f"\nstepToPixel: final pixel coordinate: [{pixelX}, {pixelY}]")
-
-#     return [round(pixelX), round(pixelY)]  # Return in [Y, X] to match camera convention
+    return [round(pixelX), round(pixelY)]  # Return in [Y, X] to match camera convention

@@ -13,20 +13,28 @@ def main():
 
     roboPaddle.homingSequence(joystick, bridge)
 
+    # for _ in range(5):
+    #     x = int(input("coord x: "))
+    #     y = int(input("coord y: "))
+        
+    #     s = pixelToStep([x,y])
+    #     p = stepToPixel([x,y])
+    #     print(f"PIXEL COORDS: {p}")
+    #     print(f"STEP COORDS: {s}")
+    
     running = True
     while running:
         puckChanges = camera.processFrame()
-        # print(puckChanges)
         camera.visualizeFrame()
         status, response = roboPaddle.statusCheck(puckChanges)
-        
+        print(status)
         if status == 0: #0 = home
-            roboPaddle.goto(bridge, [0, 0])
-
+            roboPaddle.goto(bridge, [0, 180])
+            
         elif status == 1: #1 = puck on robo side, hit
             stepCoords = pixelToStep(response)
             roboPaddle.goto(bridge, stepCoords)
-        
+
         elif status == 9: #9 = do nothing
             pass
 
