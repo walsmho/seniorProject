@@ -1,5 +1,5 @@
 from src.config import *
-from src.vision.visionUtil import stepToPixel
+from src.vision.visionUtil import stepToPixel, pixelToStep
 import time
 
 class paddle:
@@ -15,7 +15,7 @@ class paddle:
                 None
         
         """
-        self.cooldownDur = 0  # Cooldown in seconds
+        self.cooldownDur = .25  # Cooldown in seconds
         self.lastAction = 0 
         self.currentCoords = coords
         self.newCoords = newCoords
@@ -290,7 +290,7 @@ class paddle:
         """
 
         xOld, yOld = self.currentCoords
-        print(f"CURRENT COORDS {self.currentCoords}")
+        # print(f"CURRENT COORDS {self.currentCoords}")
         if newCoords is not None:
             # Check to see if coords passed wants to say same as previous, else, update simply with new
             if newCoords[0] == "self":
@@ -302,10 +302,10 @@ class paddle:
             else:
                 self.newCoords = newCoords[0], newCoords[1]
         xNew, yNew = self.newCoords
-        print(f"NEW COORDS {self.newCoords}")
+        # print(f"NEW COORDS {self.newCoords}")
 
         xCheck, yCheck = self.coordCheck(self.newCoords)
-        print(f"STATUS CHECK {xCheck}, {yCheck}")
+        # print(f"STATUS CHECK {xCheck}, {yCheck}")
 
         if xCheck != "inBounds" or yCheck != "inBounds":
             #This is not a debug only message because otherwise it just won't move and it leaves lil Ryan scratching his head like a madman
@@ -315,7 +315,7 @@ class paddle:
 
         deltaX = abs(xNew - xOld)
         deltaY = abs(yNew - yOld)
-        print(f"DELTAS: x {deltaX}, y {deltaY}")
+        # print(f"DELTAS: x {deltaX}, y {deltaY}")
         if xOld < xNew:
             sx = 1
         else:
@@ -328,10 +328,12 @@ class paddle:
         err = deltaX + deltaY
 
         infoPackage = [deltaX, deltaY, sx, sy, err]
-        print(f"\nsending package {infoPackage}")
+        if debug:
+            print(f"\nroboPaddle.goto: sending package {infoPackage}")
         communicator.issueCoordinate(infoPackage)
         communicator.waitForMessage()
-        print("\ninfoPackage succesfully sent")
+        if debug:
+            print("\nroboPaddle.goto: package succesfully sent")
         return
     
     def statusCheck(self, puckPackage, debug=False):
@@ -377,45 +379,45 @@ class paddle:
         
         elif not moved and (len(puckPackage) == 2): #If no movement and puck exists
             moved = puckPackage[0]
-            lineStart = puckPackage[1]
+            lineStart = list(puckPackage[1])
 
-            print(lineStart)
-            print(self.currentCoords)
-            print(stepToPixel(self.currentCoords))
+            # print(lineStart)
+            # print(self.currentCoords)
+            # print(stepToPixel(self.currentCoords))
 
             if not moved and lineStart[0] > 300:
-                print("PUCK IS IMMOBILE AT USER SIDE")
+                print("PUCK IS IMMOBILE AT USER SIDE. HOMING TO DEFEND")
                 status = 0
                 return status, None
             
             elif not moved and lineStart[0] < 300:
-                impact = 5
-                if (stepToPixel(self.currentCoords)[1]) < lineStart[0]:
-                    #print("PUCK IS IMMOBILE ON ROBOT SIDE AND IN FRONT OF GANTRY. HITTING")
+                if (lineStart[0]+8) > (stepToPixel(self.currentCoords)[0]):
+                    print("THE PUCK IS IN FRONT OF ME! YAY!")
+
+                    #response = [lineStart[0]+10, lineStart[1]] #+8 gives the paddle some boost, as it will continue pushing the puck instead of just tapping it
+                    response = lineStart
                     status = 1
-                    lineStart = list(lineStart)
-                    # Give the paddle a little more oomf as it hits the puck (overshoot by 5 pixels)
-                    if lineStart[0] < 0:
-                        lineStart[0] = -abs(lineStart[0]+impact)
-                    else:
-                        lineStart[0] += impact
-                    if lineStart[1] < 0:
-                        lineStart[1] = -abs(lineStart[1]+impact)
-                    else:
-                        lineStart[1] +=5
-                
-                    response = [lineStart[0]+5, lineStart[1]+5]
-                    return status, response
-                
+
+                elif lineStart[0]+20 < stepToPixel(self.currentCoords)[0]:
+                    print("THE PUCK IS BEHIND ME! RETURNING HOME TO HIT IT")
+                    status = 0
+                    response = None
+
+                # else: THIS NEEDS WORK
+                #     print("EDGE CASE - PUCK IN LINE WITH GANTRY. HITTING TOWARDS BOUNDARY")
+                #     if lineStart[1]-25 > stepToPixel(self.currentCoords)[1]:
+                #         print("PUCK IS RIGHT OF PADDLE")
+                #         response = [lineStart[0], lineStart[1]-25]
+                #     elif lineStart[1]-25 < stepToPixel(self.currentCoords)[1]:
+                #         print("PUCK IS LEFT OF PADDLE")
+                #         response = [lineStart[0], lineStart[1]+25]
+                #     else:
+                #         response = lineStart
+                #     status = 1
                 else:
-                    #print("PUCK IS IMMOBILE ON ROBOT SIDE BUT NOT HITTABLE. MOVING BEHIND IT")
-                    status = 2
-                    response = [lineStart[0]-50, lineStart[1]]
-                    return status, response
-            else:
-                print("EDGE CASE UNKNOWN")
-                status = 9
-                response = None
+                    status = 9
+                    response = None
+
                 return status, response
 
         ### BELOW WORKS KIND OF
@@ -447,7 +449,7 @@ class paddle:
             #     return status, response
 
         else:
-            return 0, None
+            return 9, None
         
         """
         
