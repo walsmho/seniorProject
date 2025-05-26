@@ -13,14 +13,10 @@ def main():
 
     roboPaddle.homingSequence(joystick, bridge)
 
-    # for _ in range(5):
-    #     x = int(input("coord x: "))
-    #     y = int(input("coord y: "))
-        
-    #     s = pixelToStep([x,y])
-    #     p = stepToPixel([x,y])
-    #     print(f"PIXEL COORDS: {p}")
-    #     print(f"STEP COORDS: {s}")
+    for _ in range(5):
+        roboPaddle.getUserCoords()
+        roboPaddle.goto(bridge)
+        roboPaddle.update()
     
     running = True
     while running:
