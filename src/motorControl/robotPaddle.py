@@ -15,7 +15,7 @@ class paddle:
                 None
         
         """
-        self.cooldownDur = .25  # Cooldown in seconds
+        self.cooldownDur = .1  # Cooldown in seconds
         self.lastAction = 0 
         self.currentCoords = coords
         self.newCoords = newCoords
@@ -147,7 +147,7 @@ class paddle:
         """
 
         #Current x bounds: 1400 and -1400
-        #Current y bounds: 2800
+        #Current y bounds: 3100
         #Tape or make a jig on table for consistent calibration
 
         if coords[0] > 1400:
@@ -162,13 +162,13 @@ class paddle:
             print(coords)
             okieDokieX = False
 
-        if coords[1] >= 2800:
+        if coords[1] >= 3100:
             okieDokieY = "UBound"
             print("U")
         elif coords[1] < 0:
             okieDokieY = "DBound"
             print("D")
-        elif coords[1] <= 2800 and self.currentCoords[1] >= 0:
+        elif coords[1] <= 3100 and self.currentCoords[1] >= 0:
             okieDokieY = "inBounds"
         else:
             print(coords)
@@ -347,10 +347,10 @@ class paddle:
             ### Args:
                 puckPackage (list): package containing:
                     moved (bool): If puck has moved significantly
-                    direction (list): vector dir
-                    speed (float): pixels/second speed calculation
-                    lineStart (list): coord point of beginning of puck trajectory
-                    lineEnd (list): coord point of end of puck trajectory, based on speed
+                    direction (np.array): vector dir
+                    speed (np.float): pixels/second speed calculation
+                    lineStart (tuple): coord point of beginning of puck trajectory
+                    lineEnd (tuple): coord point of end of puck trajectory, based on speed
                     danger (bool): If puck trajectory will go to robot goal
 
             ### Returns:
@@ -379,7 +379,6 @@ class paddle:
 
         #Status for handling no movement in puck
         if not moved and (len(puckPackage) == 1): #If no movement and no puck data (off of board):
-            print("NO MOVEMENT. PUCK NOT DETECTED")
             status = 9
             response = None
 
@@ -389,18 +388,12 @@ class paddle:
                 status = 9
                 response = None
             else: #If on robot side and stationary:
-                print(stepToPixel(self.currentCoords))
-                print(puckPos)
                 status = 2
-                response = [puckPos[0]+50, puckPos[1]]
+                response = [puckPos[0]+50, puckPos[1]+50]
 
         ### BELOW WORKS KIND OF
         elif moved:
-            direction = puckPackage[1]
-            speed = puckPackage[2]
-            lineStart = puckPackage[3]
-            lineEnd = puckPackage[4]
-            danger = puckPackage[5]
+            direction, speed, lineStart, lineEnd, danger = puckPackage[1:6]
 
             print(puckPackage)
 
@@ -408,16 +401,16 @@ class paddle:
                 status = 0
                 response = [0, 180]
             
-            elif speed < 1000:
+            else:
                 print("PUCK AT TRACKABLE SPEED")
                 status = 1
                 # Match the camera's y-axis so that the paddle is generally in the way, preventing the puck from going into the goal
                 yResponse = max(ROBOGOAL[0][1], min(lineEnd[1], ROBOGOAL[1][1]))
-                response = [60, yResponse]
+                response = [50, yResponse]
 
-            else:
-                status = 9
-                response = None
+            # else:
+            #     status = 9
+            #     response = None
 
         else:
             status = 9
@@ -425,21 +418,6 @@ class paddle:
 
         self.lastAction = currentTime
         return status, response
-        
-        """
-        
-        Current thoughts / psuedocode for each status:
-        1) If danger and speed > response threshold: Move to (0,0)
-        Could also experiment with matching the PIXEL y-axis to the same as the puck, so it won't miss when it comes in from the corner (paddle[1] = lineEnd[1])
-        Note: The pixel y-axis is really the robot x-axis
-
-        2) If (danger and speed < response threshold) or (lineEnd is within bounds of robot side and speed < response threshold):
-        If lineEnd[1] > robotCoord[1]: #if puck Y is in front of robot Y
-            Find time it will take for puck to reach end point of line given pixels / sec
-            Find time it will take gantry to reach any given point on line given max speed and current location
-
-        
-        """
 
     def update(self):
         """Make self.currentCoords update to the newCoords"""
