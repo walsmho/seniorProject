@@ -128,8 +128,8 @@ void rampMove(long deltaX, long deltaY, int sx, int sy) {
         int stepDelay;
         if (i < rampSteps) {
             stepDelay = maxDelay - ((maxDelay - minDelay) * i / rampSteps); // accelerate
-        // } else if (i > totalSteps - rampSteps) {
-        //     stepDelay = maxDelay - ((maxDelay - minDelay) * (totalSteps - i) / rampSteps); // decelerate
+        } else if (i > totalSteps - rampSteps) {
+            stepDelay = maxDelay - ((maxDelay - minDelay) * (totalSteps - i) / rampSteps); // decelerate
         } else {
             stepDelay = minDelay;
         }
@@ -138,14 +138,14 @@ void rampMove(long deltaX, long deltaY, int sx, int sy) {
 
         if (e2 > -dy && labs(currentX) < dx) {
             err -= dy;
-            currentX += 1;
+            currentX += sx;
             if (sx > 0) xRight(1, stepDelay);
             else xLeft(1, stepDelay);
         }
 
         if (e2 < dx && labs(currentY) < dy) {
             err += dx;
-            currentY += 1;
+            currentY += sy;
             if (sy > 0) yForward(1, stepDelay);
             else yBackward(1, stepDelay);
         }

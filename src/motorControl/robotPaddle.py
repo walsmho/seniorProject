@@ -15,7 +15,7 @@ class paddle:
                 None
         
         """
-        self.cooldownDur = 0  # Cooldown in seconds
+        self.cooldownDur = .25  # Cooldown in seconds
         self.lastAction = 0 
         self.currentCoords = coords
         self.newCoords = newCoords
@@ -302,6 +302,12 @@ class paddle:
             else:
                 self.newCoords = newCoords[0], newCoords[1]
         xNew, yNew = self.newCoords
+        xCurrent, yCurrent = self.currentCoords
+
+        #NEW CHECK TO PREVENT SENDING STUTTERING COORDS
+        if abs(xNew - xCurrent) <= 5 and abs(yNew - yCurrent) <= 5:
+            print("COORDS CLOSE TO CURRENT. NEGLIGIBLE.")
+            return
         print(f"NEW COORDS {self.newCoords}")
 
         xCheck, yCheck = self.coordCheck(self.newCoords)
@@ -364,7 +370,9 @@ class paddle:
         if currentTime - self.lastAction < self.cooldownDur:
             if debug:
                 print("Cooldown active - skipping response")
-            return 0, None  # Passive status during cooldown
+            status = 9
+            response = None
+            return status, response  # Passive status during cooldown
 
         #unpack
         moved = puckPackage[0]
@@ -373,81 +381,50 @@ class paddle:
         if not moved and (len(puckPackage) == 1): #If no movement and no puck data (off of board):
             print("NO MOVEMENT. PUCK NOT DETECTED")
             status = 9
-            return status, None
-        
-        elif not moved and (len(puckPackage) == 2): #If no movement and puck exists
-            moved = puckPackage[0]
-            lineStart = puckPackage[1]
+            response = None
 
-            print(lineStart)
-            print(self.currentCoords)
-            print(stepToPixel(self.currentCoords))
-
-            if not moved and lineStart[0] > 300:
-                print("PUCK IS IMMOBILE AT USER SIDE")
-                status = 0
-                return status, None
-            
-            elif not moved and lineStart[0] < 300:
-                impact = 5
-                if (stepToPixel(self.currentCoords)[1]) < lineStart[0]:
-                    #print("PUCK IS IMMOBILE ON ROBOT SIDE AND IN FRONT OF GANTRY. HITTING")
-                    status = 1
-                    lineStart = list(lineStart)
-                    # Give the paddle a little more oomf as it hits the puck (overshoot by 5 pixels)
-                    if lineStart[0] < 0:
-                        lineStart[0] = -abs(lineStart[0]+impact)
-                    else:
-                        lineStart[0] += impact
-                    if lineStart[1] < 0:
-                        lineStart[1] = -abs(lineStart[1]+impact)
-                    else:
-                        lineStart[1] +=5
-                
-                    response = [lineStart[0]+5, lineStart[1]+5]
-                    return status, response
-                
-                else:
-                    #print("PUCK IS IMMOBILE ON ROBOT SIDE BUT NOT HITTABLE. MOVING BEHIND IT")
-                    status = 2
-                    response = [lineStart[0]-50, lineStart[1]]
-                    return status, response
-            else:
-                print("EDGE CASE UNKNOWN")
+        elif not moved and (len(puckPackage) == 2): #If no movement but puck data:
+            puckPos = puckPackage[1]
+            if puckPos[0] > 300: #If on user side and stationary:
                 status = 9
                 response = None
-                return status, response
+            else: #If on robot side and stationary:
+                print(stepToPixel(self.currentCoords))
+                print(puckPos)
+                status = 2
+                response = [puckPos[0]+50, puckPos[1]]
 
         ### BELOW WORKS KIND OF
-        # # If movement, things get more complex
-        # else:
-        #     direction = puckPackage[1]
-        #     speed = puckPackage[2]
-        #     lineStart = puckPackage[3]
-        #     lineEnd = puckPackage[4]
-        #     danger = puckPackage[5]
+        elif moved:
+            direction = puckPackage[1]
+            speed = puckPackage[2]
+            lineStart = puckPackage[3]
+            lineEnd = puckPackage[4]
+            danger = puckPackage[5]
 
-        #     print(puckPackage)
+            print(puckPackage)
 
-        #     if danger: #Later change to "if danger and speed > responseThreshold"
-        #         status = "PUCK GOING TOWARDS GOAL"
-        #         response = [0, 180]
-
-        #         self.lastAction = currentTime
-        #         return status, response
+            if danger: #Later change to "if danger and speed > responseThreshold"
+                status = 0
+                response = [0, 180]
             
-            # elif speed < 500:
-            #     print("PUCK AT TRACKABLE SPEED")
-            #     status = 2
-            #     # Match the camera's y-axis so that the paddle is generally in the way, preventing the puck from going into the goal
-            #     yResponse = max(ROBOGOAL[0][1], min(lineEnd[1], ROBOGOAL[1][1]))
-            #     response = [60, yResponse]
+            elif speed < 1000:
+                print("PUCK AT TRACKABLE SPEED")
+                status = 1
+                # Match the camera's y-axis so that the paddle is generally in the way, preventing the puck from going into the goal
+                yResponse = max(ROBOGOAL[0][1], min(lineEnd[1], ROBOGOAL[1][1]))
+                response = [60, yResponse]
 
-            #     self.lastAction = currentTime
-            #     return status, response
+            else:
+                status = 9
+                response = None
 
         else:
-            return 0, None
+            status = 9
+            response = None
+
+        self.lastAction = currentTime
+        return status, response
         
         """
         

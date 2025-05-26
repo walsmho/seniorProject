@@ -12,28 +12,30 @@ def main():
     camera = overheadVision()
 
     roboPaddle.homingSequence(joystick, bridge)
-
-    for _ in range(5):
-        roboPaddle.getUserCoords()
-        roboPaddle.goto(bridge)
-        roboPaddle.update()
     
     running = True
+    #oldStatus = 9
     while running:
         puckChanges = camera.processFrame()
         camera.visualizeFrame()
         status, response = roboPaddle.statusCheck(puckChanges)
-        print(status)
+        #if status != oldStatus:
+    
         if status == 0: #0 = home
-            roboPaddle.goto(bridge, [0, 180])
+            roboPaddle.goto(bridge, [0, 0])
             
-        elif status == 1: #1 = puck on robo side, hit
+        elif status == 1: #1 = match y-axis
+            stepCoords = pixelToStep(response)
+            roboPaddle.goto(bridge, stepCoords)
+        
+        elif status == 2: #2 = hit back to player
             stepCoords = pixelToStep(response)
             roboPaddle.goto(bridge, stepCoords)
 
         elif status == 9: #9 = do nothing
             pass
 
+        #oldStatus = status
         roboPaddle.update()
         running = camera.checkStatus()
 
