@@ -15,7 +15,8 @@ class paddle:
                 None
         
         """
-        self.cooldownDur = .1  # Cooldown in seconds
+
+        self.cooldownDur = .1
         self.lastAction = 0 
         self.currentCoords = coords
         self.newCoords = newCoords
@@ -146,10 +147,6 @@ class paddle:
         
         """
 
-        #Current x bounds: 1400 and -1400
-        #Current y bounds: 3100
-        #Tape or make a jig on table for consistent calibration
-
         if coords[0] > 1400:
             okieDokieX = "RBound"
             print("R")
@@ -199,7 +196,7 @@ class paddle:
 
         if xCheck != "inBounds" or yCheck != "inBounds":
             if debug:
-                print(f"\ngotoLinear: invalid coordinate entry. {self.newCoords} out of bounds")
+                print(f"\npaddle.gotoLinear: invalid coordinate entry. {self.newCoords} out of bounds")
                 self.newCoords = self.currentCoords
             return
 
@@ -207,9 +204,9 @@ class paddle:
         deltaY = yNew - yOld
 
         if debug:
-            print(f"\ngotoLinear: current coords: [{xOld}, {yOld}]")
-            print(f"\ngotoLinear: new coords: [{xNew}, {yNew}]")
-            print(f"\ngotoLinear: delta coords: [{deltaX}, {deltaY}]")
+            print(f"\npaddle.gotoLinear: current coords: [{xOld}, {yOld}]")
+            print(f"\npaddle.gotoLinear: new coords: [{xNew}, {yNew}]")
+            print(f"\npaddle.gotoLinear: delta coords: [{deltaX}, {deltaY}]")
 
         if (xCheck == "inBounds" and yCheck == "inBounds"):
             if deltaX > 0:
@@ -247,7 +244,7 @@ class paddle:
 
         if xCheck != "inBounds" or yCheck != "inBounds":
             if debug:
-                print(f"\ngotoBresenham: invalid coordinate entry. {self.newCoords} out of bounds")
+                print(f"\npaddle.gotoBresenham: invalid coordinate entry. {self.newCoords} out of bounds")
                 self.newCoords = self.currentCoords
             return
 
@@ -290,9 +287,9 @@ class paddle:
         """
 
         xOld, yOld = self.currentCoords
-        print(f"CURRENT COORDS {self.currentCoords}")
+        # print(f"CURRENT COORDS {self.currentCoords}")
         if newCoords is not None:
-            # Check to see if coords passed wants to say same as previous, else, update simply with new
+            # Check to see if coords passed wants to say same as previous, else, update with new
             if newCoords[0] == "self":
                 self.newCoords[0] = self.currentCoords[0]
                 self.newCoords[1] = newCoords[1]
@@ -305,8 +302,9 @@ class paddle:
         xCurrent, yCurrent = self.currentCoords
 
         #NEW CHECK TO PREVENT SENDING STUTTERING COORDS
-        if abs(xNew - xCurrent) <= 5 and abs(yNew - yCurrent) <= 5:
-            print("COORDS CLOSE TO CURRENT. NEGLIGIBLE.")
+        if abs(xNew - xCurrent) <= COORDINATE_THRESHOLD and abs(yNew - yCurrent) <= COORDINATE_THRESHOLD:
+            if debug:
+                print("\npaddle.goto: COORDS CLOSE TO CURRENT. NEGLIGIBLE.")
             return
         print(f"NEW COORDS {self.newCoords}")
 
@@ -355,13 +353,12 @@ class paddle:
 
             ### Returns:
                 status (int): Numerical status signifying action to take:
-                    status=0: Passive response, do nothing
-                    status=1: Emergency response, puck headed to goal -> return home to block
-                    status=2: Defensive response, passively match puck y-axis positoin and block at closest intercept
-                    status=3: Return response, hit back to player side
-                    status=4: Attack response, hit towards player goal
+                    status=0: Emergency response, puck headed to goal -> return home
+                    status=1: Match x-axis on gantry according to projected line end
+                    status=2: Puck stationary at robot side -> hit back to player
+                    status=9: Passive response, do nothing
 
-                response (list): [x,y] PIXEL coordinates to return to, NONE if status=0
+                response (list): [x,y] PIXEL coordinates to return to, None if status=9
         
         """
         # Is this the most effective way to unpack a list into separate vars?
@@ -395,14 +392,11 @@ class paddle:
         elif moved:
             direction, speed, lineStart, lineEnd, danger = puckPackage[1:6]
 
-            print(puckPackage)
-
             if danger: #Later change to "if danger and speed > responseThreshold"
                 status = 0
                 response = [0, 180]
             
             else:
-                print("PUCK AT TRACKABLE SPEED")
                 status = 1
                 # Match the camera's y-axis so that the paddle is generally in the way, preventing the puck from going into the goal
                 yResponse = max(ROBOGOAL[0][1], min(lineEnd[1], ROBOGOAL[1][1]))

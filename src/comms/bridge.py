@@ -4,7 +4,7 @@ import time
 from src.config import *
 
 class communicator:
-    def __init__(self, COM='COM7', baud=115200, debug=False):
+    def __init__(self, COM='COM9', baud=115200, debug=False):
         """Create a new connection to the serial monitor using given COM and baud rate
         
             ### Args:
